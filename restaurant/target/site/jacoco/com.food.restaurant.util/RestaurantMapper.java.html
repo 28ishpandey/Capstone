@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant</a> &gt; <a href="index.source.html" class="el_package">com.food.restaurant.util</a> &gt; <span class="el_source">RestaurantMapper.java</span></div><h1>RestaurantMapper.java</h1><pre class="source lang-java linenums">package com.food.restaurant.util;
+
+import com.food.restaurant.dto.RestaurantInDTO;
+import com.food.restaurant.dto.RestaurantOutDTO;
+import com.food.restaurant.dto.RestaurantOwnerInDTO;
+import com.food.restaurant.dto.RestaurantOwnerOutDTO;
+import com.food.restaurant.entity.Restaurant;
+import com.food.restaurant.entity.RestaurantOwner;
+import org.springframework.stereotype.Component;
+
+/**
+ * A utility class for mapping between DTOs and entity objects related to restaurants
+ * and restaurant owners.
+ * &lt;p&gt;
+ * This class provides methods to convert between entity objects and their corresponding
+ * Data Transfer Objects (DTOs). It facilitates the transformation of data between different
+ * layers of the application, such as converting database entities to DTOs for use in the API
+ * layer and vice versa.
+ * &lt;/p&gt;
+ */
+@Component
+<span class="fc" id="L22">public class RestaurantMapper {</span>
+
+  /**
+   * Converts a {@link RestaurantOwner} entity to a {@link RestaurantOwnerOutDTO}.
+   * &lt;p&gt;
+   * This method maps the properties of the {@link RestaurantOwner} entity to a
+   * {@link RestaurantOwnerOutDTO} for use in responses or other layers where a DTO is needed.
+   * &lt;/p&gt;
+   *
+   * @param owner the {@link RestaurantOwner} entity to be converted
+   * @return the corresponding {@link RestaurantOwnerOutDTO} object
+   */
+  public RestaurantOwnerOutDTO toDto(RestaurantOwner owner) {
+<span class="fc" id="L35">    RestaurantOwnerOutDTO ownerDto = new RestaurantOwnerOutDTO();</span>
+<span class="fc" id="L36">    ownerDto.setId(owner.getId());</span>
+<span class="fc" id="L37">    ownerDto.setFirstName(owner.getFirstName());</span>
+<span class="fc" id="L38">    ownerDto.setLastName(owner.getLastName());</span>
+<span class="fc" id="L39">    ownerDto.setEmail(owner.getEmail());</span>
+<span class="fc" id="L40">    ownerDto.setContactNumber(owner.getContactNumber());</span>
+<span class="fc" id="L41">    return ownerDto;</span>
+  }
+
+  /**
+   * Converts a {@link RestaurantOwnerInDTO} to a {@link RestaurantOwner} entity.
+   * &lt;p&gt;
+   * This method maps the properties of the {@link RestaurantOwnerInDTO} to a
+   * {@link RestaurantOwner} entity for storage in the database or other persistence layers.
+   * &lt;/p&gt;
+   *
+   * @param ownerDto the {@link RestaurantOwnerInDTO} to be converted
+   * @return the corresponding {@link RestaurantOwner} entity
+   */
+  public RestaurantOwner toEntity(RestaurantOwnerInDTO ownerDto) {
+<span class="fc" id="L55">    RestaurantOwner owner = new RestaurantOwner();</span>
+<span class="fc" id="L56">    owner.setFirstName(ownerDto.getFirstName());</span>
+<span class="fc" id="L57">    owner.setLastName(ownerDto.getLastName());</span>
+<span class="fc" id="L58">    owner.setEmail(ownerDto.getEmail());</span>
+<span class="fc" id="L59">    owner.setContactNumber(ownerDto.getContactNumber());</span>
+<span class="fc" id="L60">    owner.setPassword(ownerDto.getPassword());</span>
+<span class="fc" id="L61">    return owner;</span>
+  }
+
+  /**
+   * Converts a {@link Restaurant} entity to a {@link RestaurantOutDTO}.
+   * &lt;p&gt;
+   * This method maps the properties of the {@link Restaurant} entity to a
+   * {@link RestaurantOutDTO} for use in responses or other layers where a DTO is needed.
+   * &lt;/p&gt;
+   *
+   * @param restaurant the {@link Restaurant} entity to be converted
+   * @return the corresponding {@link RestaurantOutDTO} object
+   */
+  public RestaurantOutDTO toDto(Restaurant restaurant) {
+<span class="fc" id="L75">    RestaurantOutDTO restaurantDto = new RestaurantOutDTO();</span>
+<span class="fc" id="L76">    restaurantDto.setId(restaurant.getId());</span>
+<span class="fc" id="L77">    restaurantDto.setEmail(restaurant.getEmail());</span>
+<span class="fc" id="L78">    restaurantDto.setContactNumber(restaurant.getContactNumber());</span>
+<span class="fc" id="L79">    restaurantDto.setName(restaurant.getName());</span>
+<span class="fc" id="L80">    restaurantDto.setAddress(restaurant.getAddress());</span>
+<span class="fc" id="L81">    restaurantDto.setTimings(restaurant.getTimings());</span>
+<span class="fc" id="L82">    restaurantDto.setIsOpen(restaurant.getIsOpen());</span>
+<span class="fc" id="L83">    restaurantDto.setImage(restaurant.getImage());</span>
+<span class="fc" id="L84">    return restaurantDto;</span>
+  }
+
+  /**
+   * Converts a {@link RestaurantInDTO} to a {@link Restaurant} entity.
+   * &lt;p&gt;
+   * This method maps the properties of the {@link RestaurantInDTO} to a
+   * {@link Restaurant} entity for storage in the database or other persistence layers.
+   * &lt;/p&gt;
+   *
+   * @param restaurantDto the {@link RestaurantInDTO} to be converted
+   * @return the corresponding {@link Restaurant} entity
+   */
+  public Restaurant toEntity(RestaurantInDTO restaurantDto) {
+<span class="fc" id="L98">    Restaurant restaurant = new Restaurant();</span>
+<span class="fc" id="L99">    restaurant.setEmail(restaurantDto.getEmail());</span>
+<span class="fc" id="L100">    restaurant.setContactNumber(restaurantDto.getContactNumber());</span>
+<span class="fc" id="L101">    restaurant.setPassword(restaurantDto.getPassword());</span>
+<span class="fc" id="L102">    restaurant.setName(restaurantDto.getName());</span>
+<span class="fc" id="L103">    restaurant.setAddress(restaurantDto.getAddress());</span>
+<span class="fc" id="L104">    restaurant.setTimings(restaurantDto.getTimings());</span>
+<span class="fc" id="L105">    restaurant.setIsOpen(restaurantDto.getIsOpen());</span>
+<span class="fc" id="L106">    restaurant.setRestaurantOwnerId(restaurantDto.getRestaurantOwnerId());</span>
+<span class="fc" id="L107">    return restaurant;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

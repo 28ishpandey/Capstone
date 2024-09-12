@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\constant\Constants.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\controller\CategoryController.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\controller\FoodItemController.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\controller\RestaurantController.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\controller\RestaurantOwnerController.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\CategoryDetailsDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\CategoryInDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\CategoryOutDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\FoodItemDetailsDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\FoodItemImageDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\FoodItemInDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\FoodItemOutDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\ForgotPasswordDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\LoginDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantDetailsDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantImageDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantInDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantOutDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantOwnerInDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantOwnerOutDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantOwnerUpdateDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\dto\RestaurantUpdateDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\entity\Category.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\entity\FoodItem.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\entity\Restaurant.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\entity\RestaurantOwner.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\GlobalExceptionHandler.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\InvalidCredentials.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\InvalidInputException.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\ResourceAlreadyExistException.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\ResourceNotFoundException.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\RestaurantExistException.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\exception\RestaurantNotFoundException.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\repository\CategoryRepository.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\repository\FoodItemRepository.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\repository\RestaurantOwnerRepository.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\repository\RestaurantRepository.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\RestaurantApplication.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\service\CategoryService.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\service\FoodItemService.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\service\RestaurantOwnerService.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\service\RestaurantService.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\util\MessageDTO.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\util\PasswordUtil.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\util\RestaurantMapper.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\java\com\food\restaurant\util\WebConfig.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\controller\CategoryControllerTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\controller\FoodItemControllerTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\controller\RestaurantControllerTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\controller\RestaurantOwnerControllerTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\CategoryDetailDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\CategoryInDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\CategoryOutDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\FoodImageDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\FoodItemDetailDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\FoodItemImageDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\FoodItemInDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\FoodItemOutDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\ForgotPasswordDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\LoginDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantDetailDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantImageDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantInDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantOutDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantOwnerInDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\dto\RestaurantOwnerOutDTOTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\entity\CategoryTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\entity\FoodItemTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\entity\RestaurantOwnerTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\entity\RestaurantTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\RestaurantApplicationTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\RestaurantApplicationTests.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\CategoryServiceTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\ExceptionHandlingTests.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\FoodItemServiceTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\RestaurantMapperTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\RestaurantOwnerServiceTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\test\java\com\food\restaurant\service\RestaurantServiceTest.java">
+</file>
+<file name="C:\Users\DELL\Downloads\MajorCapstone-sprint1\restaurant\src\main\resources\application.properties">
+</file>
+</checkstyle>

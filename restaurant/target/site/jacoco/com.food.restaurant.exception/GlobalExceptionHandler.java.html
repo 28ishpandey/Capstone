@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant</a> &gt; <a href="index.source.html" class="el_package">com.food.restaurant.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.food.restaurant.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+/**
+ * GlobalExceptionHandler handles various exceptions across the application.
+ * It returns appropriate HTTP status codes and error messages to the client.
+ */
+@RestControllerAdvice
+<span class="fc" id="L15">public class GlobalExceptionHandler {</span>
+
+  /**
+   * Handles MethodArgumentNotValidException, which is thrown when validation on an argument fails.
+   *
+   * @param ex the MethodArgumentNotValidException thrown when validation fails.
+   * @return ErrorResponse containing a bad request status and the validation error message.
+   */
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
+<span class="fc" id="L27">    String errorMessage = &quot;Validation failed: &quot; + ex.getFieldError().getDefaultMessage();</span>
+<span class="fc" id="L28">    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);</span>
+  }
+
+  /**
+   * Handles RestaurantExistException, which is thrown when attempting to create a restaurant
+   * that already exists.
+   *
+   * @param ex the RestaurantExistException.
+   * @return ErrorResponse containing a conflict status and the exception message.
+   */
+  @ExceptionHandler(RestaurantExistException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleRestaurantExistsException(RestaurantExistException ex) {
+<span class="fc" id="L42">    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());</span>
+  }
+
+  /**
+   * Handles RestaurantNotFoundException, which is thrown when a restaurant is not found.
+   *
+   * @param ex the RestaurantNotFoundException.
+   * @return ErrorResponse containing a not found status and the exception message.
+   */
+  @ExceptionHandler(RestaurantNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ErrorResponse handleRestaurantNotFoundException(RestaurantNotFoundException ex) {
+<span class="fc" id="L55">    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());</span>
+  }
+
+  /**
+   * Handles ResourceNotFoundException, which is thrown when a requested resource is not found.
+   *
+   * @param ex the ResourceNotFoundException.
+   * @return ErrorResponse containing a not found status and the exception message.
+   */
+  @ExceptionHandler(ResourceNotFoundException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  @ResponseBody
+  public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex) {
+<span class="fc" id="L68">    return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());</span>
+  }
+
+  /**
+   * Handles ResourceAlreadyExistException, which is thrown when attempting to create a resource
+   * that already exists.
+   *
+   * @param ex the ResourceAlreadyExistException.
+   * @return ErrorResponse containing a conflict status and the exception message.
+   */
+  @ExceptionHandler(ResourceAlreadyExistException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorResponse handleResourceAlreadyExistsException(ResourceAlreadyExistException ex) {
+<span class="fc" id="L82">    return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());</span>
+  }
+
+  /**
+   * Handles InvalidInputException, which is thrown when invalid input is provided.
+   *
+   * @param ex the InvalidInputException.
+   * @return ErrorResponse containing a bad request status and the exception message.
+   */
+  @ExceptionHandler(InvalidInputException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorResponse handleInvalidInputException(InvalidInputException ex) {
+<span class="fc" id="L95">    return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());</span>
+  }
+
+  /**
+   * Inner class representing an error response that will be returned in the case of an exception.
+   */
+  public static class ErrorResponse {
+    private int status;
+    private String message;
+
+    /**
+     * Constructs an ErrorResponse with the specified status and message.
+     *
+     * @param status  the HTTP status code.
+     * @param message the error message.
+     */
+<span class="fc" id="L111">    public ErrorResponse(int status, String message) {</span>
+<span class="fc" id="L112">      this.status = status;</span>
+<span class="fc" id="L113">      this.message = message;</span>
+<span class="fc" id="L114">    }</span>
+
+    /**
+     * Returns the HTTP status code.
+     *
+     * @return the status code.
+     */
+    public int getStatus() {
+<span class="fc" id="L122">      return status;</span>
+    }
+
+    /**
+     * Sets the HTTP status code.
+     *
+     * @param status the status code.
+     */
+    public void setStatus(int status) {
+<span class="fc" id="L131">      this.status = status;</span>
+<span class="fc" id="L132">    }</span>
+
+    /**
+     * Returns the error message.
+     *
+     * @return the error message.
+     */
+    public String getMessage() {
+<span class="fc" id="L140">      return message;</span>
+    }
+
+    /**
+     * Sets the error message.
+     *
+     * @param message the error message.
+     */
+    public void setMessage(String message) {
+<span class="fc" id="L149">      this.message = message;</span>
+<span class="fc" id="L150">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

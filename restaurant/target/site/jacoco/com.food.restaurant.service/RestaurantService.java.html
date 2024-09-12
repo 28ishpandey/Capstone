@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RestaurantService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant</a> &gt; <a href="index.source.html" class="el_package">com.food.restaurant.service</a> &gt; <span class="el_source">RestaurantService.java</span></div><h1>RestaurantService.java</h1><pre class="source lang-java linenums">package com.food.restaurant.service;
+
+import com.food.restaurant.constant.Constants;
+import com.food.restaurant.dto.CategoryDetailsDTO;
+import com.food.restaurant.dto.CategoryOutDTO;
+import com.food.restaurant.dto.FoodItemDetailsDTO;
+import com.food.restaurant.dto.FoodItemOutDTO;
+import com.food.restaurant.dto.RestaurantDetailsDTO;
+import com.food.restaurant.dto.RestaurantImageDTO;
+import com.food.restaurant.dto.RestaurantInDTO;
+import com.food.restaurant.dto.RestaurantOutDTO;
+import com.food.restaurant.dto.RestaurantUpdateDTO;
+import com.food.restaurant.entity.Category;
+import com.food.restaurant.entity.FoodItem;
+import com.food.restaurant.entity.Restaurant;
+import com.food.restaurant.entity.RestaurantOwner;
+import com.food.restaurant.exception.ResourceNotFoundException;
+import com.food.restaurant.repository.CategoryRepository;
+import com.food.restaurant.repository.FoodItemRepository;
+import com.food.restaurant.repository.RestaurantOwnerRepository;
+import com.food.restaurant.repository.RestaurantRepository;
+import com.food.restaurant.util.MessageDTO;
+import com.food.restaurant.util.PasswordUtil;
+import com.food.restaurant.util.RestaurantMapper;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+/**
+ * Service class for managing restaurant-related operations, including CRUD operations for restaurants,
+ * uploading and updating images, and managing food items and categories.
+ */
+@Service
+<span class="fc" id="L44">@Slf4j</span>
+<span class="fc" id="L45">public class RestaurantService {</span>
+
+  @Autowired
+  private RestaurantRepository restaurantRepository;
+
+  @Autowired
+  private RestaurantOwnerRepository ownerRepository;
+
+  @Autowired
+  private RestaurantMapper restaurantMapper;
+
+  @Autowired
+  private CategoryRepository categoryRepository;
+
+  @Autowired
+  private FoodItemRepository foodItemRepository;
+  /**
+   * Creates a new restaurant with the given details and image.
+   *
+   * @param restaurantDto the details of the restaurant to be created
+   * @param image the image file associated with the restaurant
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;MessageDTO&gt; createRestaurant(RestaurantInDTO restaurantDto, MultipartFile image) {
+<span class="fc" id="L69">    log.info(&quot;Entering createRestaurantWithImage with email: {}&quot;, restaurantDto.getEmail());</span>
+
+<span class="fc" id="L71">    String trimmedEmail = restaurantDto.getEmail().trim().toLowerCase();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">    if (restaurantRepository.existsByEmail(trimmedEmail)) {</span>
+<span class="fc" id="L73">      log.warn(&quot;Restaurant email already exists: {}&quot;, restaurantDto.getEmail());</span>
+<span class="fc" id="L74">      return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.EMAIL_ALREADY_EXISTS), HttpStatus.CONFLICT);</span>
+    }
+
+<span class="fc" id="L77">    String normalizedName = restaurantDto.getName().trim().toLowerCase();</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    if (restaurantRepository.existsByNameIgnoreCase(normalizedName)) {</span>
+<span class="fc" id="L79">      log.warn(&quot;Restaurant name already exists: {}&quot;, restaurantDto.getName());</span>
+<span class="fc" id="L80">      return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_NAME_ALREADY_EXISTS), HttpStatus.CONFLICT);</span>
+    }
+
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">    if (!ownerRepository.existsById(restaurantDto.getRestaurantOwnerId())) {</span>
+<span class="fc" id="L84">      log.warn(&quot;Restaurant owner not found for ID: {}&quot;, restaurantDto.getRestaurantOwnerId());</span>
+<span class="fc" id="L85">      return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_OWNER_NOT_FOUND), HttpStatus.NOT_FOUND);</span>
+    }
+
+<span class="nc" id="L88">    Restaurant restaurant = restaurantMapper.toEntity(restaurantDto);</span>
+<span class="nc" id="L89">    restaurant.setEmail(trimmedEmail);</span>
+<span class="nc" id="L90">    restaurant.setName(restaurantDto.getName().trim());</span>
+<span class="nc" id="L91">    restaurant.setPassword(PasswordUtil.encode(restaurantDto.getPassword()));</span>
+
+<span class="nc bnc" id="L93" title="All 4 branches missed.">    if (image != null &amp;&amp; !image.isEmpty()) {</span>
+      try {
+<span class="nc" id="L95">        validateImageFormat(image);</span>
+<span class="nc" id="L96">        restaurant.setImage(image.getBytes());</span>
+<span class="nc" id="L97">      } catch (IOException e) {</span>
+<span class="nc" id="L98">        log.error(&quot;Error processing image for restaurant creation&quot;, e);</span>
+<span class="nc" id="L99">        throw new RuntimeException(&quot;Error processing image&quot;, e);</span>
+<span class="nc" id="L100">      }</span>
+    }
+
+<span class="nc" id="L103">    restaurantRepository.save(restaurant);</span>
+<span class="nc" id="L104">    log.info(&quot;Successfully created restaurant with email: {} and name: {}&quot;, restaurant.getEmail(), restaurant.getName());</span>
+
+<span class="nc" id="L106">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_CREATED_SUCCESSFULLY), HttpStatus.CREATED);</span>
+  }
+  /**
+   * Updates an existing restaurant with the given ID, details, and image.
+   *
+   * @param id the ID of the restaurant to be updated
+   * @param restaurantDto the new details for the restaurant
+   * @param image the new image file for the restaurant
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;MessageDTO&gt; updateRestaurant(Long id, RestaurantUpdateDTO restaurantDto, MultipartFile image) {
+<span class="fc" id="L117">    log.info(&quot;Entering updateRestaurant with id: {} and email: {}&quot;, id, restaurantDto.getEmail());</span>
+
+<span class="fc" id="L119">    Restaurant restaurant = restaurantRepository.findById(id)</span>
+<span class="fc" id="L120">      .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L121">        log.warn(&quot;Restaurant not found with id: {}&quot;, id);</span>
+<span class="fc" id="L122">        return new ResourceNotFoundException(Constants.RESOURCE_NOT_FOUND);</span>
+      });
+<span class="fc bfc" id="L124" title="All 2 branches covered.">    if (!restaurant.getEmail().equals(restaurantDto.getEmail())) {</span>
+<span class="fc" id="L125">      String trimmedEmail = restaurantDto.getEmail().trim().toLowerCase();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">      if (restaurantRepository.existsByEmail(trimmedEmail)) {</span>
+<span class="fc" id="L127">        log.warn(&quot;Email already in use: {}&quot;, trimmedEmail);</span>
+<span class="fc" id="L128">        return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.EMAIL_ALREADY_EXISTS), HttpStatus.CONFLICT);</span>
+      }
+<span class="fc" id="L130">      restaurant.setEmail(trimmedEmail);</span>
+    }
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">    if (!restaurant.getName().equals(restaurantDto.getName())) {</span>
+<span class="fc" id="L133">      String normalizedName = restaurantDto.getName().trim().toLowerCase();</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">      if (restaurantRepository.existsByNameIgnoreCase(normalizedName)) {</span>
+<span class="fc" id="L135">        log.warn(&quot;Restaurant name already exists: {}&quot;, restaurantDto.getName());</span>
+<span class="fc" id="L136">        return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_NAME_ALREADY_EXISTS), HttpStatus.CONFLICT);</span>
+      }
+<span class="fc" id="L138">      restaurant.setName(restaurantDto.getName().trim());</span>
+    }
+<span class="fc" id="L140">    restaurant.setContactNumber(restaurantDto.getContactNumber());</span>
+<span class="fc" id="L141">    restaurant.setAddress(restaurantDto.getAddress());</span>
+<span class="fc" id="L142">    restaurant.setTimings(restaurantDto.getTimings());</span>
+<span class="fc" id="L143">    restaurant.setIsOpen(restaurantDto.getIsOpen());</span>
+
+<span class="pc bpc" id="L145" title="2 of 4 branches missed.">    if (image != null &amp;&amp; !image.isEmpty()) {</span>
+      try {
+<span class="fc" id="L147">        validateImageFormat(image);</span>
+<span class="fc" id="L148">        restaurant.setImage(image.getBytes());</span>
+<span class="nc" id="L149">      } catch (IOException e) {</span>
+<span class="nc" id="L150">        log.error(&quot;Error processing image for restaurant update&quot;, e);</span>
+<span class="nc" id="L151">        throw new RuntimeException(&quot;Error processing image&quot;, e);</span>
+<span class="fc" id="L152">      }</span>
+    }
+
+<span class="fc" id="L155">    restaurantRepository.save(restaurant);</span>
+
+<span class="fc" id="L157">    log.info(&quot;Successfully updated restaurant with id: {}&quot;, id);</span>
+<span class="fc" id="L158">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_UPDATED_SUCCESSFULLY), HttpStatus.OK);</span>
+  }
+  /**
+   * Uploads an image for a restaurant.
+   *
+   * @param restaurantImageDTO contains the restaurant ID and image file
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;String&gt; uploadRestaurantImage(RestaurantImageDTO restaurantImageDTO) {
+<span class="fc" id="L167">    Restaurant restaurant = findRestaurantById(restaurantImageDTO.getRestaurantId());</span>
+
+<span class="fc" id="L169">    validateImageFormat(restaurantImageDTO.getImage());</span>
+
+    try {
+<span class="fc" id="L172">      restaurant.setImage(restaurantImageDTO.getImage().getBytes());</span>
+<span class="fc" id="L173">      restaurantRepository.save(restaurant);</span>
+<span class="fc" id="L174">      log.info(&quot;Image uploaded for restaurant with ID: {}&quot;, restaurant.getId());</span>
+<span class="nc" id="L175">    } catch (IOException e) {</span>
+<span class="nc" id="L176">      log.error(&quot;Error uploading image for restaurant with ID: {}&quot;, restaurant.getId(), e);</span>
+<span class="nc" id="L177">      throw new RuntimeException(&quot;Error uploading image&quot;, e);</span>
+<span class="fc" id="L178">    }</span>
+
+<span class="fc" id="L180">    return new ResponseEntity&lt;&gt;(Constants.IMAGE_ADDED_SUCCESSFULLY, HttpStatus.OK);</span>
+  }
+
+  /**
+   * Retrieves the image for a restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a ResponseEntity containing the image bytes and HTTP headers
+   */
+  public ResponseEntity&lt;byte[]&gt; getRestaurantImage(Long restaurantId) {
+<span class="fc" id="L190">    Restaurant restaurant = findRestaurantById(restaurantId);</span>
+
+<span class="fc" id="L192">    byte[] image = restaurant.getImage();</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">    if (image == null) {</span>
+<span class="fc" id="L194">      log.warn(&quot;No image found for restaurant with ID: {}&quot;, restaurantId);</span>
+<span class="fc" id="L195">      throw new ResourceNotFoundException(&quot;No image found for restaurant ID: &quot; + restaurantId);</span>
+    }
+
+<span class="fc" id="L198">    HttpHeaders headers = new HttpHeaders();</span>
+<span class="fc" id="L199">    headers.setContentType(MediaType.IMAGE_JPEG); // You might want to check the actual content type</span>
+
+<span class="fc" id="L201">    return new ResponseEntity&lt;&gt;(image, headers, HttpStatus.OK);</span>
+  }
+  /**
+   * Updates the image for a restaurant.
+   *
+   * @param restaurantImageDTO contains the restaurant ID and new image file
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;MessageDTO&gt; updateRestaurantImage(RestaurantImageDTO restaurantImageDTO) {
+<span class="fc" id="L210">    Restaurant restaurant = findRestaurantById(restaurantImageDTO.getRestaurantId());</span>
+
+<span class="fc" id="L212">    validateImageFormat(restaurantImageDTO.getImage());</span>
+
+    try {
+<span class="fc" id="L215">      restaurant.setImage(restaurantImageDTO.getImage().getBytes());</span>
+<span class="fc" id="L216">      restaurantRepository.save(restaurant);</span>
+<span class="fc" id="L217">      log.info(&quot;Image updated for restaurant with ID: {}&quot;, restaurant.getId());</span>
+<span class="nc" id="L218">    } catch (IOException e) {</span>
+<span class="nc" id="L219">      log.error(&quot;Error updating image for restaurant with ID: {}&quot;, restaurant.getId(), e);</span>
+<span class="nc" id="L220">      throw new RuntimeException(&quot;Error updating image&quot;, e);</span>
+<span class="fc" id="L221">    }</span>
+
+<span class="fc" id="L223">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.IMAGE_UPDATED_SUCCESSFULLY), HttpStatus.OK);</span>
+  }
+  /**
+   * Deletes the image for a restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;String&gt; deleteRestaurantImage(Long restaurantId) {
+<span class="fc" id="L232">    Restaurant restaurant = findRestaurantById(restaurantId);</span>
+
+<span class="fc bfc" id="L234" title="All 2 branches covered.">    if (restaurant.getImage() == null) {</span>
+<span class="fc" id="L235">      log.warn(&quot;No image to delete for restaurant with ID: {}&quot;, restaurantId);</span>
+<span class="fc" id="L236">      throw new ResourceNotFoundException(&quot;No image to delete for restaurant ID: &quot; + restaurantId);</span>
+    }
+
+<span class="fc" id="L239">    restaurant.setImage(null);</span>
+<span class="fc" id="L240">    restaurantRepository.save(restaurant);</span>
+<span class="fc" id="L241">    log.info(&quot;Image deleted for restaurant with ID: {}&quot;, restaurantId);</span>
+
+<span class="fc" id="L243">    return new ResponseEntity&lt;&gt;(Constants.IMAGE_DELETED_SUCCESSFULLY, HttpStatus.NO_CONTENT);</span>
+  }
+  /**
+   * Finds a restaurant by its ID.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return the Restaurant entity
+   * @throws ResourceNotFoundException if the restaurant is not found
+   */
+  private Restaurant findRestaurantById(Long restaurantId) {
+<span class="fc" id="L253">    return restaurantRepository.findById(restaurantId)</span>
+<span class="fc" id="L254">      .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L255">        log.warn(&quot;Restaurant not found with ID: {}&quot;, restaurantId);</span>
+<span class="fc" id="L256">        return new ResourceNotFoundException(&quot;Restaurant not found with ID: &quot; + restaurantId);</span>
+      });
+  }
+  /**
+   * Validates the format of the given image file.
+   *
+   * @param file the image file to be validated
+   * @throws IllegalArgumentException if the file format is not allowed
+   */
+  private void validateImageFormat(MultipartFile file) {
+<span class="fc" id="L266">    String contentType = file.getContentType();</span>
+<span class="pc bpc" id="L267" title="2 of 6 branches missed.">    if (!&quot;image/jpeg&quot;.equals(contentType) &amp;&amp; !&quot;image/jpg&quot;.equals(contentType) &amp;&amp; !&quot;image/png&quot;.equals(contentType)) {</span>
+<span class="fc" id="L268">      log.warn(&quot;Invalid image format: {}&quot;, contentType);</span>
+<span class="fc" id="L269">      throw new IllegalArgumentException(&quot;Invalid file format. Only JPEG, JPG, and PNG are allowed.&quot;);</span>
+    }
+<span class="fc" id="L271">  }</span>
+  /**
+   * Deletes a restaurant with the given ID after verifying the owner's password.
+   *
+   * @param id the ID of the restaurant to be deleted
+   * @param ownerPassword the password of the restaurant owner
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  public ResponseEntity&lt;MessageDTO&gt; deleteRestaurant(Long id, String ownerPassword) {
+<span class="fc" id="L280">    log.info(&quot;Entering deleteRestaurant with id: {}&quot;, id);</span>
+
+<span class="fc" id="L282">    Optional&lt;Restaurant&gt; restaurant = restaurantRepository.findById(id);</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">    if (restaurant.isEmpty()) {</span>
+<span class="fc" id="L284">      log.warn(&quot;Restaurant not found with id: {}&quot;, id);</span>
+<span class="fc" id="L285">      return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);</span>
+    }
+<span class="fc" id="L287">    Long ownerId = restaurant.get().getRestaurantOwnerId();</span>
+<span class="fc" id="L288">    Optional&lt;RestaurantOwner&gt; owner = ownerRepository.findById(ownerId);</span>
+
+<span class="fc bfc" id="L290" title="All 2 branches covered.">    if (owner.isEmpty()) {</span>
+<span class="fc" id="L291">      log.warn(&quot;Owner not found with id: {}&quot;, ownerId);</span>
+<span class="fc" id="L292">      return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESOURCE_NOT_FOUND), HttpStatus.NOT_FOUND);</span>
+    }
+
+<span class="fc" id="L295">    String decodedPassword = PasswordUtil.decode(owner.get().getPassword());</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">    if (!decodedPassword.equals(ownerPassword)) {</span>
+<span class="fc" id="L297">      log.warn(&quot;Invalid password for deleting restaurant with id: {}&quot;, id);</span>
+<span class="fc" id="L298">      return new ResponseEntity&lt;&gt;(new MessageDTO(&quot;Invalid owner password.&quot;), HttpStatus.UNAUTHORIZED);</span>
+    }
+<span class="fc" id="L300">    restaurantRepository.deleteById(id);</span>
+<span class="fc" id="L301">    log.info(&quot;Exiting deleteRestaurant with id: {}&quot;, id);</span>
+<span class="fc" id="L302">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.RESTAURANT_DELETED_SUCCESSFULLY), HttpStatus.OK);</span>
+  }
+
+  /**
+   * Retrieves the details of a restaurant by its ID.
+   *
+   * @param id the ID of the restaurant
+   * @return a ResponseEntity containing the restaurant details
+   */
+  public ResponseEntity&lt;?&gt; getRestaurant(Long id) {
+<span class="fc" id="L312">    log.info(&quot;Entering getRestaurant with id: {}&quot;, id);</span>
+
+<span class="fc" id="L314">    Optional&lt;Restaurant&gt; restaurant = restaurantRepository.findById(id);</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">    if (restaurant.isEmpty()) {</span>
+<span class="fc" id="L316">      log.warn(&quot;Restaurant not found with id: {}&quot;, id);</span>
+<span class="fc" id="L317">      return new ResponseEntity&lt;&gt;(new MessageDTO(&quot;Restaurant Not Found&quot;), HttpStatus.NOT_FOUND);</span>
+    }
+
+<span class="fc" id="L320">    RestaurantOutDTO restaurantDto = restaurantMapper.toDto(restaurant.get());</span>
+<span class="fc" id="L321">    log.info(&quot;Exiting getRestaurant with id: {}&quot;, id);</span>
+<span class="fc" id="L322">    return new ResponseEntity&lt;&gt;(restaurantDto, HttpStatus.OK);</span>
+  }
+  /**
+   * Retrieves a list of all restaurants.
+   *
+   * @return a ResponseEntity containing a list of RestaurantOutDTO
+   */
+  public ResponseEntity&lt;List&lt;RestaurantOutDTO&gt;&gt; getAllRestaurants() {
+<span class="fc" id="L330">    log.info(&quot;Entering getAllRestaurants&quot;);</span>
+
+<span class="fc" id="L332">    List&lt;Restaurant&gt; restaurants = restaurantRepository.findAll();</span>
+<span class="fc" id="L333">    List&lt;RestaurantOutDTO&gt; restaurantDtos = restaurants.stream()</span>
+<span class="fc" id="L334">      .map(restaurantMapper::toDto)</span>
+<span class="fc" id="L335">      .toList();</span>
+
+<span class="fc" id="L337">    log.info(&quot;Exiting getAllRestaurants&quot;);</span>
+<span class="fc" id="L338">    return new ResponseEntity&lt;&gt;(restaurantDtos, HttpStatus.OK);</span>
+  }
+  /**
+   * Sets the operational status of a restaurant.
+   *
+   * @param id the ID of the restaurant
+   * @param isOpen the new status of the restaurant
+   * @return a ResponseEntity containing a message indicating the result of the operation
+   */
+  @Transactional
+  public ResponseEntity&lt;MessageDTO&gt; setRestaurantStatus(Long id, Boolean isOpen) {
+<span class="fc" id="L349">    log.info(&quot;Entering setRestaurantStatus with id: {} and isOpen: {}&quot;, id, isOpen);</span>
+
+<span class="fc" id="L351">    Optional&lt;Restaurant&gt; restaurantOpt = restaurantRepository.findById(id);</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">    if (restaurantOpt.isEmpty()) {</span>
+<span class="fc" id="L353">      log.warn(&quot;Restaurant not found with id: {}&quot;, id);</span>
+<span class="fc" id="L354">      throw new ResourceNotFoundException(Constants.RESOURCE_NOT_FOUND);</span>
+    }
+
+<span class="fc" id="L357">    Restaurant restaurant = restaurantOpt.get();</span>
+<span class="fc" id="L358">    restaurant.setIsOpen(isOpen);</span>
+<span class="fc" id="L359">    restaurantRepository.save(restaurant);</span>
+
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">    String status = isOpen ? &quot;open&quot; : &quot;closed&quot;;</span>
+<span class="fc" id="L362">    log.info(&quot;Successfully set restaurant status to {} for id: {}&quot;, status, id);</span>
+<span class="fc" id="L363">    return new ResponseEntity&lt;&gt;(new MessageDTO(&quot;Restaurant status set to &quot; + status + &quot; successfully&quot;), HttpStatus.OK);</span>
+  }
+  /**
+   * Retrieves all food items categorized by restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a ResponseEntity containing a list of CategoryOutDTO with nested food items
+   */
+  @Transactional
+  public ResponseEntity&lt;List&lt;CategoryOutDTO&gt;&gt; getAllFoodItemsByRestaurant(Long restaurantId) {
+<span class="fc" id="L373">    log.info(&quot;Fetching all categories and their food items for restaurant ID: {}&quot;, restaurantId);</span>
+
+<span class="fc" id="L375">    List&lt;Category&gt; categories = categoryRepository.findByRestaurantId(restaurantId);</span>
+<span class="pc bpc" id="L376" title="1 of 2 branches missed.">    if (categories.isEmpty()) {</span>
+<span class="fc" id="L377">      throw new ResourceNotFoundException(Constants.NO_CATEGORIES_FOUND_FOR_RESTAURANT);</span>
+    }
+<span class="nc" id="L379">    List&lt;CategoryOutDTO&gt; categoryOutDTOs = categories.stream().map(category -&gt; {</span>
+<span class="nc" id="L380">      CategoryOutDTO categoryOutDTO = new CategoryOutDTO();</span>
+<span class="nc" id="L381">      categoryOutDTO.setId(category.getId());</span>
+<span class="nc" id="L382">      categoryOutDTO.setRestaurantId(category.getRestaurantId());</span>
+<span class="nc" id="L383">      categoryOutDTO.setName(category.getName());</span>
+
+<span class="nc" id="L385">      List&lt;FoodItem&gt; foodItems = foodItemRepository.findByCategoryId(category.getId());</span>
+<span class="nc" id="L386">      List&lt;FoodItemOutDTO&gt; foodItemOutDTOs = foodItems.stream().map(foodItem -&gt; {</span>
+<span class="nc" id="L387">        FoodItemOutDTO foodItemOutDTO = new FoodItemOutDTO();</span>
+<span class="nc" id="L388">        foodItemOutDTO.setId(foodItem.getId());</span>
+<span class="nc" id="L389">        foodItemOutDTO.setCategoryId(foodItem.getCategoryId());</span>
+<span class="nc" id="L390">        foodItemOutDTO.setRestaurantId(foodItem.getRestaurantId());</span>
+<span class="nc" id="L391">        foodItemOutDTO.setName(foodItem.getName());</span>
+<span class="nc" id="L392">        foodItemOutDTO.setPrice(foodItem.getPrice());</span>
+<span class="nc" id="L393">        foodItemOutDTO.setAvailability(foodItem.isAvailability());</span>
+<span class="nc" id="L394">        foodItemOutDTO.setVeg(foodItem.isVeg());</span>
+<span class="nc" id="L395">        foodItemOutDTO.setDescription(foodItem.getDescription());</span>
+<span class="nc" id="L396">        foodItemOutDTO.setImage(foodItem.getImage());</span>
+<span class="nc" id="L397">        return foodItemOutDTO;</span>
+<span class="nc" id="L398">      }).collect(Collectors.toList());</span>
+
+<span class="nc" id="L400">      categoryOutDTO.setFoodItems(foodItemOutDTOs);</span>
+<span class="nc" id="L401">      return categoryOutDTO;</span>
+<span class="nc" id="L402">    }).collect(Collectors.toList());</span>
+
+<span class="nc" id="L404">    log.info(&quot;Successfully fetched categories and food items for restaurant ID: {}&quot;, restaurantId);</span>
+<span class="nc" id="L405">    return new ResponseEntity&lt;&gt;(categoryOutDTOs, HttpStatus.OK);</span>
+  }
+  /**
+   * Retrieves all food items for a specific restaurant.
+   *
+   * @param restaurantId the ID of the restaurant
+   * @return a ResponseEntity containing a list of FoodItemOutDTO
+   */
+  @Transactional
+  public ResponseEntity&lt;List&lt;FoodItemOutDTO&gt;&gt; getAllFoodItemsOfRestaurant(Long restaurantId) {
+<span class="fc" id="L415">    log.info(&quot;Fetching all food items for restaurant ID: {}&quot;, restaurantId);</span>
+
+<span class="fc" id="L417">    List&lt;FoodItem&gt; foodItems = foodItemRepository.findByRestaurantId(restaurantId);</span>
+<span class="fc bfc" id="L418" title="All 2 branches covered.">    if (foodItems.isEmpty()) {</span>
+<span class="fc" id="L419">      throw new ResourceNotFoundException(Constants.NO_FOOD_ITEMS_FOUND_FOR_RESTAURANT);</span>
+    }
+<span class="fc" id="L421">    List&lt;FoodItemOutDTO&gt; foodItemOutDTOs = foodItems.stream().map(foodItem -&gt; {</span>
+<span class="fc" id="L422">      FoodItemOutDTO dto = new FoodItemOutDTO();</span>
+<span class="fc" id="L423">      dto.setId(foodItem.getId());</span>
+<span class="fc" id="L424">      dto.setCategoryId(foodItem.getCategoryId());</span>
+<span class="fc" id="L425">      dto.setRestaurantId(foodItem.getRestaurantId());</span>
+<span class="fc" id="L426">      dto.setName(foodItem.getName());</span>
+<span class="fc" id="L427">      dto.setPrice(foodItem.getPrice());</span>
+<span class="fc" id="L428">      dto.setAvailability(foodItem.isAvailability());</span>
+<span class="fc" id="L429">      dto.setVeg(foodItem.isVeg());</span>
+<span class="fc" id="L430">      dto.setDescription(foodItem.getDescription());</span>
+<span class="fc" id="L431">      dto.setImage(foodItem.getImage());</span>
+<span class="fc" id="L432">      return dto;</span>
+<span class="fc" id="L433">    }).collect(Collectors.toList());</span>
+
+<span class="fc" id="L435">    log.info(&quot;Successfully fetched all food items for restaurant ID: {}&quot;, restaurantId);</span>
+<span class="fc" id="L436">    return new ResponseEntity&lt;&gt;(foodItemOutDTOs, HttpStatus.OK);</span>
+  }
+  /**
+   * Retrieves all restaurants with their detailed categories and food items.
+   *
+   * @return a ResponseEntity containing a list of RestaurantDetailsDTO
+   */
+  @Transactional
+  public ResponseEntity&lt;List&lt;RestaurantDetailsDTO&gt;&gt; getAllRestaurantsWithDetails() {
+<span class="fc" id="L445">    log.info(&quot;Fetching all restaurants with their categories and food items&quot;);</span>
+
+<span class="fc" id="L447">    List&lt;Restaurant&gt; restaurants = restaurantRepository.findAll();</span>
+
+<span class="fc" id="L449">    List&lt;RestaurantDetailsDTO&gt; restaurantDetailsDTOs = restaurants.stream()</span>
+<span class="fc" id="L450">      .map(restaurant -&gt; {</span>
+<span class="nc" id="L451">        RestaurantDetailsDTO restaurantDetailsDTO = new RestaurantDetailsDTO();</span>
+<span class="nc" id="L452">        restaurantDetailsDTO.setRestaurantId(restaurant.getId());</span>
+<span class="nc" id="L453">        restaurantDetailsDTO.setRestaurantName(restaurant.getName());</span>
+<span class="nc" id="L454">        restaurantDetailsDTO.setEmail(restaurant.getEmail());</span>
+<span class="nc" id="L455">        restaurantDetailsDTO.setContactNumber(restaurant.getContactNumber());</span>
+<span class="nc" id="L456">        restaurantDetailsDTO.setAddress(restaurant.getAddress());</span>
+<span class="nc" id="L457">        restaurantDetailsDTO.setTimings(restaurant.getTimings());</span>
+<span class="nc" id="L458">        restaurantDetailsDTO.setIsOpen(restaurant.getIsOpen());</span>
+<span class="nc" id="L459">        restaurantDetailsDTO.setImage(restaurant.getImage());</span>
+
+<span class="nc" id="L461">        List&lt;Category&gt; categories = categoryRepository.findByRestaurantId(restaurant.getId());</span>
+<span class="nc" id="L462">        List&lt;CategoryDetailsDTO&gt; categoryDetailsDTOs = categories.stream()</span>
+<span class="nc" id="L463">          .map(category -&gt; {</span>
+<span class="nc" id="L464">            CategoryDetailsDTO categoryDetailsDTO = new CategoryDetailsDTO();</span>
+<span class="nc" id="L465">            categoryDetailsDTO.setCategoryId(category.getId());</span>
+<span class="nc" id="L466">            categoryDetailsDTO.setCategoryName(category.getName());</span>
+
+<span class="nc" id="L468">            List&lt;FoodItem&gt; foodItems = foodItemRepository.findByCategoryId(category.getId());</span>
+<span class="nc" id="L469">            List&lt;FoodItemDetailsDTO&gt; foodItemDetailsDTOs = foodItems.stream()</span>
+<span class="nc" id="L470">              .map(foodItem -&gt; {</span>
+<span class="nc" id="L471">                FoodItemDetailsDTO foodItemDetailsDTO = new FoodItemDetailsDTO();</span>
+<span class="nc" id="L472">                foodItemDetailsDTO.setFoodItemId(foodItem.getId());</span>
+<span class="nc" id="L473">                foodItemDetailsDTO.setFoodItemName(foodItem.getName());</span>
+<span class="nc" id="L474">                foodItemDetailsDTO.setPrice(foodItem.getPrice());</span>
+<span class="nc" id="L475">                foodItemDetailsDTO.setAvailability(foodItem.isAvailability());</span>
+<span class="nc" id="L476">                foodItemDetailsDTO.setVeg(foodItem.isVeg());</span>
+<span class="nc" id="L477">                foodItemDetailsDTO.setDescription(foodItem.getDescription());</span>
+<span class="nc" id="L478">                foodItemDetailsDTO.setImage(foodItem.getImage());</span>
+<span class="nc" id="L479">                return foodItemDetailsDTO;</span>
+<span class="nc" id="L480">              }).collect(Collectors.toList());</span>
+
+<span class="nc" id="L482">            categoryDetailsDTO.setFoodItems(foodItemDetailsDTOs);</span>
+<span class="nc" id="L483">            return categoryDetailsDTO;</span>
+<span class="nc" id="L484">          }).collect(Collectors.toList());</span>
+
+<span class="nc" id="L486">        restaurantDetailsDTO.setCategories(categoryDetailsDTOs);</span>
+<span class="nc" id="L487">        return restaurantDetailsDTO;</span>
+<span class="fc" id="L488">      }).collect(Collectors.toList());</span>
+
+<span class="fc" id="L490">    log.info(&quot;Fetched {} restaurants with details&quot;, restaurantDetailsDTOs.size());</span>
+<span class="fc" id="L491">    return new ResponseEntity&lt;&gt;(restaurantDetailsDTOs, HttpStatus.OK);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

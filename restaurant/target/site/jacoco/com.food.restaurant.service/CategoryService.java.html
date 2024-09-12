@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CategoryService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">restaurant</a> &gt; <a href="index.source.html" class="el_package">com.food.restaurant.service</a> &gt; <span class="el_source">CategoryService.java</span></div><h1>CategoryService.java</h1><pre class="source lang-java linenums">package com.food.restaurant.service;
+
+import com.food.restaurant.constant.Constants;
+import com.food.restaurant.dto.CategoryInDTO;
+import com.food.restaurant.dto.CategoryOutDTO;
+import com.food.restaurant.entity.Category;
+import com.food.restaurant.exception.ResourceAlreadyExistException;
+import com.food.restaurant.exception.ResourceNotFoundException;
+import com.food.restaurant.repository.CategoryRepository;
+import com.food.restaurant.repository.RestaurantRepository;
+import com.food.restaurant.util.MessageDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Service class responsible for managing Category operations such as creating, retrieving, updating,
+ * and deleting categories associated with a restaurant.
+ */
+@Service
+<span class="fc" id="L26">@Slf4j</span>
+<span class="fc" id="L27">public class CategoryService {</span>
+
+  @Autowired
+  private CategoryRepository categoryRepository;
+
+  @Autowired
+  private RestaurantRepository restaurantRepository;
+
+  /**
+   * Creates a new category for a restaurant. If the restaurant does not exist, or the category name
+   * already exists for the restaurant, an exception is thrown.
+   *
+   * @param categoryInDTO the category data transfer object containing the category name and restaurant ID.
+   * @return a ResponseEntity containing a success message and HTTP status code.
+   * @throws ResourceNotFoundException     if the restaurant is not found.
+   * @throws ResourceAlreadyExistException if the category name already exists for the specified restaurant.
+   */
+  public ResponseEntity&lt;MessageDTO&gt; createCategory(CategoryInDTO categoryInDTO) {
+<span class="fc bfc" id="L45" title="All 2 branches covered.">    if (!restaurantRepository.existsById(categoryInDTO.getRestaurantId())) {</span>
+<span class="fc" id="L46">      log.warn(&quot;Restaurant not found with ID: {}&quot;, categoryInDTO.getRestaurantId());</span>
+<span class="fc" id="L47">      throw new ResourceNotFoundException(&quot;Restaurant not found with ID: &quot; + categoryInDTO.getRestaurantId());</span>
+    }
+
+<span class="fc" id="L50">    String categoryName = categoryInDTO.getName().trim().toLowerCase();</span>
+<span class="fc" id="L51">    boolean exists = categoryRepository.existsByRestaurantIdAndNameIgnoreCase(categoryInDTO.getRestaurantId(), categoryName);</span>
+
+<span class="fc bfc" id="L53" title="All 2 branches covered.">    if (exists) {</span>
+<span class="fc" id="L54">      log.warn(&quot;Category name '{}' already exists for restaurant ID: {}&quot;, categoryInDTO.getName(), categoryInDTO.getRestaurantId());</span>
+<span class="fc" id="L55">      throw new ResourceAlreadyExistException(&quot;Category name already exists for the specified restaurant.&quot;);</span>
+    }
+
+<span class="fc" id="L58">    Category category = new Category();</span>
+<span class="fc" id="L59">    category.setRestaurantId(categoryInDTO.getRestaurantId());</span>
+<span class="fc" id="L60">    category.setName(categoryName);</span>
+<span class="fc" id="L61">    categoryRepository.save(category);</span>
+
+<span class="fc" id="L63">    log.info(&quot;Category '{}' created successfully for restaurant ID: {}&quot;, category.getName(), category.getRestaurantId());</span>
+<span class="fc" id="L64">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.CATEGORY_CREATED_SUCCESSFULLY), HttpStatus.CREATED);</span>
+  }
+
+  /**
+   * Retrieves all categories associated with a specific restaurant.
+   *
+   * @param restaurantId the ID of the restaurant whose categories are to be retrieved.
+   * @return a ResponseEntity containing a list of CategoryOutDTO objects and an HTTP status code.
+   */
+  public ResponseEntity&lt;List&lt;CategoryOutDTO&gt;&gt; getAllCategoriesForRestaurant(Long restaurantId) {
+<span class="fc" id="L74">    List&lt;Category&gt; categories = categoryRepository.findByRestaurantId(restaurantId);</span>
+<span class="fc" id="L75">    List&lt;CategoryOutDTO&gt; categoryOutDTOs = categories.stream()</span>
+<span class="fc" id="L76">      .map(this::toOutDTO)</span>
+<span class="fc" id="L77">      .collect(Collectors.toList());</span>
+
+<span class="fc" id="L79">    log.info(&quot;Retrieved {} categories for restaurant ID: {}&quot;, categories.size(), restaurantId);</span>
+<span class="fc" id="L80">    return new ResponseEntity&lt;&gt;(categoryOutDTOs, HttpStatus.OK);</span>
+  }
+
+  /**
+   * Updates an existing category for a restaurant. If the restaurant or category is not found, or
+   * if the category name already exists, an exception is thrown.
+   *
+   * @param id            the ID of the category to be updated.
+   * @param categoryInDTO the updated category data transfer object.
+   * @return a ResponseEntity containing a success message and HTTP status code.
+   * @throws ResourceNotFoundException     if the restaurant or category is not found.
+   * @throws ResourceAlreadyExistException if the category name already exists for the restaurant.
+   */
+  public ResponseEntity&lt;MessageDTO&gt; updateCategory(Long id, CategoryInDTO categoryInDTO) {
+<span class="fc" id="L94">    log.info(&quot;Entering updateCategory with ID: {}&quot;, id);</span>
+
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">    if (!restaurantRepository.existsById(categoryInDTO.getRestaurantId())) {</span>
+<span class="nc" id="L97">      log.warn(&quot;Restaurant not found with ID: {}&quot;, categoryInDTO.getRestaurantId());</span>
+<span class="nc" id="L98">      throw new ResourceNotFoundException(&quot;Restaurant not found with ID: &quot; + categoryInDTO.getRestaurantId());</span>
+    }
+<span class="fc" id="L100">    Category category = categoryRepository.findById(id)</span>
+<span class="fc" id="L101">      .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Category not found with ID: &quot; + id));</span>
+
+<span class="fc" id="L103">    String categoryName = categoryInDTO.getName().trim().toLowerCase();</span>
+
+<span class="fc" id="L105">    boolean exists = categoryRepository.existsByRestaurantIdAndNameIgnoreCase(categoryInDTO.getRestaurantId(), categoryName);</span>
+
+<span class="pc bpc" id="L107" title="1 of 4 branches missed.">    if (exists &amp;&amp; !categoryName.equalsIgnoreCase(category.getName())) {</span>
+<span class="fc" id="L108">      log.warn(&quot;Category name '{}' already exists for restaurant ID: {}&quot;, categoryInDTO.getName(), categoryInDTO.getRestaurantId());</span>
+<span class="fc" id="L109">      throw new ResourceAlreadyExistException(&quot;Category name already exists for the specified restaurant.&quot;);</span>
+    }
+<span class="fc" id="L111">    category.setName(categoryName);</span>
+<span class="fc" id="L112">    categoryRepository.save(category);</span>
+
+<span class="fc" id="L114">    log.info(&quot;Category '{}' updated successfully for restaurant ID: {}&quot;, category.getName(), category.getRestaurantId());</span>
+<span class="fc" id="L115">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.CATEGORY_UPDATED_SUCCESSFULLY), HttpStatus.OK);</span>
+  }
+
+  /**
+   * Deletes a category by its ID. If the category is not found, an exception is thrown.
+   *
+   * @param id the ID of the category to be deleted.
+   * @return a ResponseEntity containing a success message and HTTP status code.
+   * @throws ResourceNotFoundException if the category is not found.
+   */
+  public ResponseEntity&lt;MessageDTO&gt; deleteCategory(Long id) {
+<span class="fc" id="L126">    Category category = categoryRepository.findById(id)</span>
+<span class="fc" id="L127">      .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;Category not found with ID: &quot; + id));</span>
+
+<span class="fc" id="L129">    categoryRepository.delete(category);</span>
+<span class="fc" id="L130">    log.info(&quot;Category with ID: {} deleted successfully&quot;, id);</span>
+<span class="fc" id="L131">    return new ResponseEntity&lt;&gt;(new MessageDTO(Constants.CATEGORY_DELETED_SUCCESSFULLY), HttpStatus.NO_CONTENT);</span>
+  }
+
+  /**
+   * Converts a Category entity to a CategoryOutDTO object.
+   *
+   * @param category the Category entity to convert.
+   * @return the corresponding CategoryOutDTO object.
+   */
+  private CategoryOutDTO toOutDTO(Category category) {
+<span class="fc" id="L141">    CategoryOutDTO dto = new CategoryOutDTO();</span>
+<span class="fc" id="L142">    dto.setId(category.getId());</span>
+<span class="fc" id="L143">    dto.setRestaurantId(category.getRestaurantId());</span>
+<span class="fc" id="L144">    dto.setName(category.getName());</span>
+<span class="fc" id="L145">    return dto;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
