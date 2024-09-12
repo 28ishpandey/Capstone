@@ -211,6 +211,18 @@ public class UsersService {
     return convertToResponseDTO(updatedUser);
   }
 
+  /**
+   * Updates the address for a specified user.
+   * <p>
+   * This method retrieves the user by their ID, updates their address with the new value,
+   * saves the updated user, and returns a {@link UserResponseDTO} representing the updated user.
+   * </p>
+   *
+   * @param userId the ID of the user whose address is to be updated
+   * @param newAddress the new address to set for the user
+   * @return a {@link UserResponseDTO} containing the updated user information
+   * @throws AccountNotFoundException if the user with the specified ID is not found
+   */
   public UserResponseDTO updateAddress(Long userId, String newAddress) {
     log.info("Updating address for user ID: {}", userId);
     Users user = userRepository.findById(userId)
@@ -221,6 +233,18 @@ public class UsersService {
     return convertToResponseDTO(updatedUser);
   }
 
+  /**
+   * Updates the wallet balance for a specified user.
+   * <p>
+   * This method retrieves the user by their ID, updates their wallet balance with the new value,
+   * saves the updated user, and returns a {@link UserResponseDTO} representing the updated user.
+   * </p>
+   *
+   * @param userId the ID of the user whose wallet balance is to be updated
+   * @param newBalance the new wallet balance to set for the user
+   * @return a {@link UserResponseDTO} containing the updated user information
+   * @throws AccountNotFoundException if the user with the specified ID is not found
+   */
   public UserResponseDTO updateWalletBalance(Long userId, Double newBalance) {
     log.info("Updating wallet balance for user ID: {}", userId);
     Users user = userRepository.findById(userId)
@@ -231,6 +255,16 @@ public class UsersService {
     return convertToResponseDTO(updatedUser);
   }
 
+  /**
+   * Converts a {@link Users} entity to a {@link UserResponseDTO}.
+   * <p>
+   * This method creates a new {@link UserResponseDTO} and populates it with the user's details
+   * such as user ID, email, contact number, first name, last name, address, and wallet balance.
+   * </p>
+   *
+   * @param user the {@link Users} entity to convert
+   * @return a {@link UserResponseDTO} containing the user's details
+   */
   private UserResponseDTO convertToResponseDTO(Users user) {
     UserResponseDTO responseDTO = new UserResponseDTO();
     responseDTO.setUserId(user.getUserId());
