@@ -4,16 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) for transferring a message.
+ * <p>
+ * This class uses Lombok annotations to automatically generate getter, setter,
+ * toString, equals, and hashCode methods, as well as no-argument and all-arguments
+ * constructors.
+ * </p>
+ *
+ * @see lombok.Data
+ * @see lombok.AllArgsConstructor
+ * @see lombok.NoArgsConstructor
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageDTO {
+
   /**
    * The message content.
-   * <p>
-   * This field contains the message string that is intended to be conveyed
-   * in the response. It is used to provide information or status updates.
-   * </p>
    */
   private String message;
 }
