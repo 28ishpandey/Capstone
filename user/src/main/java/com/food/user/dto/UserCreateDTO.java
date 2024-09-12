@@ -21,14 +21,14 @@ public class UserCreateDTO {
    */
   @NotBlank(message = "Email cannot be blank")
   @Email(message = "Email should be valid")
-  @Pattern(regexp = ".*\\.com$", message = "Email should end with 'domain.com'")
+  @Email(regexp = ".+@gmail\\.com", message = "Email should end with gmail.com")
   private String email;
 
   /**
    * Contact number of the user. Must be exactly 10 digits.
    */
   @NotBlank(message = "contact number cannot be blank")
-  @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
+  @Pattern(regexp = "^[987]\\d{9}$", message = "Contact number should be 10 digits and start with 9, 8, or 7")
   private String contactNumber;
 
   /**
