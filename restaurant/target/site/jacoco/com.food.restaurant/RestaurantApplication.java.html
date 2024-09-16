@@ -2,13 +2,28 @@
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+/**
+ * The entry point for the Restaurant application.
+ * &lt;p&gt;
+ * This class is annotated with {@link SpringBootApplication} to mark it as the primary
+ * Spring Boot application class. It contains the {@code main} method that starts the
+ * application by calling {@link SpringApplication#run(Class, String...)}.
+ * &lt;/p&gt;
+ */
 @SpringBootApplication
-<span class="fc" id="L7">public class RestaurantApplication {</span>
+<span class="fc" id="L14">public class RestaurantApplication {</span>
 
+  /**
+   * The main method that serves as the entry point for the application.
+   * &lt;p&gt;
+   * This method initializes the Spring Boot application by calling the {@link SpringApplication#run(Class, String...)}
+   * method with the {@code RestaurantApplication} class and any command-line arguments.
+   * &lt;/p&gt;
+   *
+   * @param args command-line arguments passed to the application
+   */
   public static void main(String[] args) {
-<span class="fc" id="L10">    SpringApplication.run(RestaurantApplication.class, args);</span>
-<span class="fc" id="L11">  }</span>
-
+<span class="fc" id="L26">    SpringApplication.run(RestaurantApplication.class, args);</span>
+<span class="fc" id="L27">  }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -5,15 +5,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Configuration class to set up Cross-Origin Resource Sharing (CORS) settings.
+ * &lt;p&gt;
+ * This configuration allows requests from any origin and supports various HTTP methods.
+ * It is used to configure CORS mappings for the entire application.
+ * &lt;/p&gt;
+ */
 @Configuration
-<span class="fc" id="L9">public class WebConfig implements WebMvcConfigurer {</span>
+<span class="fc" id="L16">public class WebConfig implements WebMvcConfigurer {</span>
 
+  /**
+   * Configures CORS mappings for the application.
+   * &lt;p&gt;
+   * This method allows requests from any origin (&quot;*&quot;), supports all standard HTTP methods
+   * including GET, POST, PUT, DELETE, and OPTIONS, and allows all headers.
+   * &lt;/p&gt;
+   *
+   * @param registry the {@link CorsRegistry} to configure
+   */
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-<span class="fc" id="L13">    registry.addMapping(&quot;/**&quot;)</span>
-<span class="fc" id="L14">      .allowedOrigins(&quot;*&quot;)</span>
-<span class="fc" id="L15">      .allowedMethods(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;)</span>
-<span class="fc" id="L16">      .allowedHeaders(&quot;*&quot;);</span>
-<span class="fc" id="L17">  }</span>
+<span class="fc" id="L29">    registry.addMapping(&quot;/**&quot;)</span>
+<span class="fc" id="L30">      .allowedOrigins(&quot;*&quot;)</span>
+<span class="fc" id="L31">      .allowedMethods(&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;)</span>
+<span class="fc" id="L32">      .allowedHeaders(&quot;*&quot;);</span>
+<span class="fc" id="L33">  }</span>
 }
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
