@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/orders")
 @Slf4j
 public class OrderController {
-
+  /**
+   * Service for handling order-related operations.
+   */
   @Autowired
   private OrderService orderService;
 
@@ -41,7 +43,7 @@ public class OrderController {
    * @return the created order details wrapped in a {@link ResponseEntity}
    */
   @PostMapping
-  public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody OrderCreateDTO orderCreateDTO) {
+  public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody final OrderCreateDTO orderCreateDTO) {
     log.info("Creating order for user: {}", orderCreateDTO.getUserId());
     return orderService.createOrder(orderCreateDTO);
   }
@@ -53,7 +55,7 @@ public class OrderController {
    * @return the order details wrapped in a {@link ResponseEntity}
    */
   @GetMapping("/{orderId}")
-  public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable Long orderId) {
+  public ResponseEntity<OrderResponseDTO> getOrder(@PathVariable final Long orderId) {
     log.info("Fetching order: {}", orderId);
     return orderService.getOrder(orderId);
   }
@@ -66,8 +68,8 @@ public class OrderController {
    * @return the response indicating the update operation status
    */
   @PutMapping("/{orderId}/status")
-  public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId,
-                                             @Valid @RequestBody UpdateOrderStatusDTO updateOrderStatusDTO) {
+  public ResponseEntity<?> updateOrderStatus(@PathVariable final Long orderId,
+                                             @Valid @RequestBody final UpdateOrderStatusDTO updateOrderStatusDTO) {
     log.info("Updating order status: {} to {}", orderId, updateOrderStatusDTO.getStatus());
     return orderService.updateOrderStatus(orderId, updateOrderStatusDTO.getStatus());
   }
@@ -79,7 +81,7 @@ public class OrderController {
    * @return a list of orders for the specified user wrapped in a {@link ResponseEntity}
    */
   @GetMapping("/user/{userId}")
-  public ResponseEntity<?> getUserOrders(@PathVariable Long userId) {
+  public ResponseEntity<?> getUserOrders(@PathVariable final Long userId) {
     log.info("Fetching orders for user: {}", userId);
     return orderService.getUserOrders(userId);
   }
@@ -91,7 +93,7 @@ public class OrderController {
    * @return a list of orders for the specified restaurant wrapped in a {@link ResponseEntity}
    */
   @GetMapping("/restaurant/{restaurantId}")
-  public ResponseEntity<?> getRestaurantOrders(@PathVariable Long restaurantId) {
+  public ResponseEntity<?> getRestaurantOrders(@PathVariable final Long restaurantId) {
     log.info("Fetching orders for restaurant: {}", restaurantId);
     return orderService.getRestaurantOrders(restaurantId);
   }
@@ -103,7 +105,7 @@ public class OrderController {
    * @return a response message wrapped in a {@link ResponseEntity}
    */
   @DeleteMapping("/{orderId}")
-  public ResponseEntity<MessageDTO> cancelOrder(@PathVariable Long orderId) {
+  public ResponseEntity<MessageDTO> cancelOrder(@PathVariable final Long orderId) {
     log.info("Cancelling order: {}", orderId);
     return orderService.cancelOrder(orderId);
   }
@@ -116,7 +118,8 @@ public class OrderController {
    * @return the updated order details wrapped in a {@link ResponseEntity}
    */
   @PostMapping("/{orderId}/items")
-  public ResponseEntity<OrderResponseDTO> addItemToOrder(@PathVariable Long orderId, @Valid @RequestBody OrderItemDTO addItemDTO) {
+  public ResponseEntity<OrderResponseDTO> addItemToOrder(@PathVariable final Long orderId,
+                                                         @Valid @RequestBody final OrderItemDTO addItemDTO) {
     log.info("Adding item to order: {}", orderId);
     return orderService.addItemToOrder(orderId, addItemDTO);
   }
@@ -129,7 +132,8 @@ public class OrderController {
    * @return the updated order details wrapped in a {@link ResponseEntity}
    */
   @DeleteMapping("/{orderId}/items/{foodItemId}")
-  public ResponseEntity<OrderResponseDTO> removeItemFromOrder(@PathVariable Long orderId, @PathVariable Long foodItemId) {
+  public ResponseEntity<OrderResponseDTO> removeItemFromOrder(@PathVariable final Long orderId,
+                                                              @PathVariable final Long foodItemId) {
     log.info("Removing item from order: {}, foodItemId: {}", orderId, foodItemId);
     return orderService.removeItemFromOrder(orderId, foodItemId);
   }
@@ -143,9 +147,23 @@ public class OrderController {
    * @return the updated order details wrapped in a {@link ResponseEntity}
    */
   @PutMapping("/{orderId}/items/{foodItemId}")
-  public ResponseEntity<OrderResponseDTO> updateItemQuantity(@PathVariable Long orderId, @PathVariable Long foodItemId,
-                                                             @Valid @RequestBody UpdateItemQuantityDTO updateQuantityDTO) {
-    log.info("Updating item quantity in order: {}, foodItemId: {}, quantity: {}", orderId, foodItemId, updateQuantityDTO.getQuantity());
+  public ResponseEntity<OrderResponseDTO> updateItemQuantity(@PathVariable final Long orderId,
+                                                             @PathVariable final Long foodItemId,
+                                                             @Valid @RequestBody final
+                                                               UpdateItemQuantityDTO updateQuantityDTO) {
+    log.info("Updating item quantity in order: {}, foodItemId: {}, quantity: {}", orderId, foodItemId,
+      updateQuantityDTO.getQuantity());
     return orderService.updateItemQuantity(orderId, foodItemId, updateQuantityDTO);
+  }
+  /**
+   * Deletes an order with the specified ID.
+   *
+   * @param orderId the ID of the order to delete
+   * @return a response message wrapped in a {@link ResponseEntity}
+   */
+  @DeleteMapping("/{orderId}/delete")
+  public ResponseEntity<MessageDTO> deleteOrder(@PathVariable final Long orderId) {
+    log.info("Deleting order: {}", orderId);
+    return orderService.deleteOrder(orderId);
   }
 }

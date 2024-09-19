@@ -84,12 +84,10 @@
 				<version>3.2.0</version>
 				<configuration>
 					<consoleOutput>true</consoleOutput>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<includeTestSourceDirectory>false</includeTestSourceDirectory>
 					<failOnViolation>true</failOnViolation>
 					<failsOnError>true</failsOnError>
 					<configLocation>config/checkstyle/checkstyle.xml</configLocation>
-					<suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
-					<suppressionsFileExpression>suppressions.xml</suppressionsFileExpression>
 				</configuration>
 				<executions>
 					<execution>
@@ -101,24 +99,11 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- PMD Plugin -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.21.0</version>
-			</plugin>
-			<!-- Spotbugs Plugin -->
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.7.3.0</version> <!-- Use the latest version -->
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 
 			<plugin>

@@ -19,8 +19,6 @@ class UpdateOrderStatusDTOTest {
 
     dto.setStatus(null);
     assertNull(dto.getStatus());
-
-    // Test all possible enum values
     for (OrderStatus orderStatus : OrderStatus.values()) {
       dto.setStatus(orderStatus);
       assertEquals(orderStatus, dto.getStatus());

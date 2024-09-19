@@ -13,17 +13,18 @@ import com.food.order.entity.OrderItem;
 import com.food.order.entity.OrderStatus;
 import com.food.order.exception.InvalidInputException;
 import com.food.order.exception.ResourceNotFoundException;
+import com.food.order.exception.ServiceUnavailableException;
 import com.food.order.feign.RestaurantFeignClient;
 import com.food.order.feign.UserFeignClient;
 import com.food.order.repository.OrderItemRepository;
 import com.food.order.repository.OrderRepository;
 import feign.FeignException;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -38,16 +39,24 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class OrderService {
-
+  /**
+   * Repository for order data operations.
+   */
   @Autowired
   private OrderRepository orderRepository;
-
+  /**
+   * Repository for order items data operations.
+   */
   @Autowired
   private OrderItemRepository orderItemRepository;
-
+  /**
+   * For user microservice communication operations.
+   */
   @Autowired
   private UserFeignClient userFeignClient;
-
+  /**
+   * For restaurant microservice communication operations.
+   */
   @Autowired
   private RestaurantFeignClient restaurantFeignClient;
   /**
@@ -58,7 +67,7 @@ public class OrderService {
    * @throws ResourceNotFoundException if the user or restaurant is not found
    * @throws InvalidInputException if the restaurant is closed or insufficient wallet balance
    */
-  public ResponseEntity<OrderResponseDTO> createOrder(OrderCreateDTO orderCreateDTO) {
+  public ResponseEntity<OrderResponseDTO> createOrder(final OrderCreateDTO orderCreateDTO) {
     UserResponseDTO user = getUser(orderCreateDTO.getUserId());
     RestaurantOutDTO restaurant = getRestaurant(orderCreateDTO.getRestaurantId());
 
@@ -80,12 +89,14 @@ public class OrderService {
    * @return UserResponseDTO containing user details
    * @throws ResourceNotFoundException if the user is not found
    */
-  private UserResponseDTO getUser(Long userId) {
-    UserResponseDTO user = userFeignClient.getUserById(userId);
-    if (user == null) {
+  private UserResponseDTO getUser(final Long userId) {
+    try {
+      return userFeignClient.getUserById(userId);
+    } catch (FeignException.NotFound e) {
       throw new ResourceNotFoundException(Constants.USER_NOT_FOUND + userId);
+    } catch (FeignException e) {
+      throw new ServiceUnavailableException("User service is unavailable");
     }
-    return user;
   }
   /**
    * Retrieves restaurant details by its ID.
@@ -94,12 +105,14 @@ public class OrderService {
    * @return RestaurantOutDTO containing restaurant details
    * @throws ResourceNotFoundException if the restaurant is not found
    */
-  private RestaurantOutDTO getRestaurant(Long restaurantId) {
-    RestaurantOutDTO restaurant = restaurantFeignClient.getRestaurantById(restaurantId);
-    if (restaurant == null) {
+  private RestaurantOutDTO getRestaurant(final Long restaurantId) {
+    try {
+      return restaurantFeignClient.getRestaurantById(restaurantId);
+    } catch (FeignException.NotFound e) {
       throw new ResourceNotFoundException(Constants.RESTAURANT_NOT_FOUND + restaurantId);
+    } catch (FeignException e) {
+      throw new ServiceUnavailableException("Restaurant service is unavailable");
     }
-    return restaurant;
   }
   /**
    * Validates whether the order can be created based on user and restaurant data.
@@ -109,7 +122,8 @@ public class OrderService {
    * @param orderCreateDTO the DTO containing order creation details
    * @throws InvalidInputException if the restaurant is closed or insufficient wallet balance
    */
-  private void validateOrderCreation(UserResponseDTO user, RestaurantOutDTO restaurant, OrderCreateDTO orderCreateDTO) {
+  private void validateOrderCreation(final UserResponseDTO user, final RestaurantOutDTO restaurant,
+                                     final OrderCreateDTO orderCreateDTO) {
     if (user == null || restaurant == null) {
       throw new ResourceNotFoundException("User or Restaurant not found");
     }
@@ -129,7 +143,7 @@ public class OrderService {
    * @param orderItems list of items in the order
    * @return the total amount for the order
    */
-  private double calculateTotalAmount(List<OrderItemDTO> orderItems) {
+  private double calculateTotalAmount(final List<OrderItemDTO> orderItems) {
     return orderItems.stream()
       .mapToDouble(item -> item.getPrice() * item.getQuantity())
       .sum();
@@ -143,7 +157,8 @@ public class OrderService {
    * @param restaurantId the ID of the restaurant where the order is placed
    * @return Order entity ready for persistence
    */
-  private Order createOrderEntity(OrderCreateDTO orderCreateDTO, Long userId, Long restaurantId) {
+  private Order createOrderEntity(final OrderCreateDTO orderCreateDTO, final Long userId,
+                                  final Long restaurantId) {
     Order order = new Order();
     order.setUserId(userId);
     order.setRestaurantId(restaurantId);
@@ -160,7 +175,8 @@ public class OrderService {
    * @param orderId the ID of the order
    * @return list of OrderItem entities ready for persistence
    */
-  private List<OrderItem> createOrderItems(List<OrderItemDTO> orderItemDTOs, Long orderId) {
+  private List<OrderItem> createOrderItems(final List<OrderItemDTO> orderItemDTOs,
+                                           final Long orderId) {
     return orderItemDTOs.stream()
       .map(itemDTO -> {
         OrderItem item = new OrderItem();
@@ -180,7 +196,7 @@ public class OrderService {
    * @return ResponseEntity containing the order details
    * @throws ResourceNotFoundException if the order is not found
    */
-  public ResponseEntity<OrderResponseDTO> getOrder(Long orderId) {
+  public ResponseEntity<OrderResponseDTO> getOrder(final Long orderId) {
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
     List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
@@ -196,7 +212,7 @@ public class OrderService {
    * @throws ResourceNotFoundException if the order is not found
    * @throws InvalidInputException if status update is not valid
    */
-  public ResponseEntity<?> updateOrderStatus(Long orderId, OrderStatus newStatus) {
+  public ResponseEntity<?> updateOrderStatus(final Long orderId, final OrderStatus newStatus) {
     log.info("Inside update order status with ID:{}", orderId);
     try {
       Order order = orderRepository.findById(orderId)
@@ -240,7 +256,8 @@ public class OrderService {
     } catch (ResourceNotFoundException | InvalidInputException e) {
       return new ResponseEntity<>(new MessageDTO(e.getMessage()), HttpStatus.BAD_REQUEST);
     } catch (RuntimeException e) {
-      return new ResponseEntity<>(new MessageDTO("An error occurred while processing the order"), HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(new MessageDTO("An error occurred while processing the order"),
+        HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
   /**
@@ -249,7 +266,7 @@ public class OrderService {
    * @param userId the ID of the user
    * @return ResponseEntity containing the list of user orders
    */
-  public ResponseEntity<?> getUserOrders(Long userId) {
+  public ResponseEntity<?> getUserOrders(final Long userId) {
     List<Order> orders = orderRepository.findByUserId(userId);
     if (orders.isEmpty()) {
       log.info("No orders found for user ID: {}", userId);
@@ -272,7 +289,7 @@ public class OrderService {
    * @param restaurantId the ID of the restaurant
    * @return ResponseEntity containing the list of restaurant orders
    */
-  public ResponseEntity<?> getRestaurantOrders(Long restaurantId) {
+  public ResponseEntity<?> getRestaurantOrders(final Long restaurantId) {
     List<Order> orders = orderRepository.findByRestaurantId(restaurantId);
     if (orders.isEmpty()) {
       log.info("No orders found for restaurant ID: {}", restaurantId);
@@ -298,7 +315,7 @@ public class OrderService {
    * @throws InvalidInputException if the order cannot be cancelled
    * @throws ResourceNotFoundException if the order is not found
    */
-  public ResponseEntity<MessageDTO> cancelOrder(Long orderId) {
+  public ResponseEntity<MessageDTO> cancelOrder(final Long orderId) {
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
 
@@ -334,7 +351,7 @@ public class OrderService {
    * @param restaurantId the ID of the restaurant
    * @return true if both user and restaurant exist, false otherwise
    */
-  boolean validateUserAndRestaurant(Long userId, Long restaurantId) {
+  boolean validateUserAndRestaurant(final Long userId, final Long restaurantId) {
     try {
       userFeignClient.getUserById(userId);
       restaurantFeignClient.getRestaurantById(restaurantId);
@@ -352,7 +369,7 @@ public class OrderService {
    * @return ResponseEntity containing the updated order details
    * @throws InvalidInputException if the order is not in cart status or invalid item quantity
    */
-  public ResponseEntity<OrderResponseDTO> addItemToOrder(Long orderId, OrderItemDTO addItemDTO) {
+  public ResponseEntity<OrderResponseDTO> addItemToOrder(final Long orderId, final OrderItemDTO addItemDTO) {
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
 
@@ -390,7 +407,7 @@ public class OrderService {
    * @throws InvalidInputException if the order is not in cart status
    * @throws ResourceNotFoundException if the item is not found in the order
    */
-  public ResponseEntity<OrderResponseDTO> removeItemFromOrder(Long orderId, Long foodItemId) {
+  public ResponseEntity<OrderResponseDTO> removeItemFromOrder(final Long orderId, final Long foodItemId) {
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
 
@@ -420,7 +437,8 @@ public class OrderService {
    * @return ResponseEntity containing the updated order details
    * @throws InvalidInputException if the order is not in cart status or quantity is invalid
    */
-  public ResponseEntity<OrderResponseDTO> updateItemQuantity(Long orderId, Long foodItemId, UpdateItemQuantityDTO updateQuantityDTO) {
+  public ResponseEntity<OrderResponseDTO> updateItemQuantity(final Long orderId, final Long foodItemId,
+                                                             final UpdateItemQuantityDTO updateQuantityDTO) {
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
 
@@ -456,13 +474,34 @@ public class OrderService {
     return new ResponseEntity<>(createOrderResponseDTO(order, updatedItems), HttpStatus.OK);
   }
   /**
+   * Deletes an order and its associated items if the order is in the 'IN_CART' status.
+   *
+   * @param orderId the ID of the order to be deleted
+   * @return ResponseEntity containing a message indicating successful deletion
+   * @throws ResourceNotFoundException if no order is found with the given ID
+   * @throws InvalidInputException if the order status is not 'IN_CART'
+   */
+  @Transactional
+  public ResponseEntity<MessageDTO> deleteOrder(final Long orderId) {
+    Order order = orderRepository.findById(orderId)
+      .orElseThrow(() -> new ResourceNotFoundException(Constants.ORDER_NOT_FOUND + orderId));
+    if (order.getOrderStatus() != OrderStatus.IN_CART) {
+      throw new InvalidInputException("Only orders in cart can be deleted");
+    }
+    orderItemRepository.deleteByOrderId(orderId);
+    orderRepository.delete(order);
+
+    log.info("Deleted order with ID: {}", orderId);
+    return new ResponseEntity<>(new MessageDTO("Order deleted successfully"), HttpStatus.OK);
+  }
+  /**
    * Creates a response DTO for the given order and its items.
    *
    * @param order the order entity
    * @param orderItems the list of items in the order
    * @return OrderResponseDTO containing order and item details
    */
-  private OrderResponseDTO createOrderResponseDTO(Order order, List<OrderItem> orderItems) {
+  private OrderResponseDTO createOrderResponseDTO(final Order order, final List<OrderItem> orderItems) {
     OrderResponseDTO responseDTO = new OrderResponseDTO();
     responseDTO.setOrderId(order.getOrderId());
     responseDTO.setUserId(order.getUserId());
@@ -481,10 +520,10 @@ public class OrderService {
   }
   /**
    * Converts an entity to DTO.
-   *
+   * @param item for incoming data.
    * @return OrderItemDTO.
    */
-  private OrderItemDTO convertToOrderItemDTO(OrderItem item) {
+  private OrderItemDTO convertToOrderItemDTO(final OrderItem item) {
     OrderItemDTO itemDTO = new OrderItemDTO();
     itemDTO.setFoodItemId(item.getFoodItemId());
     itemDTO.setFoodItemName(item.getFoodItemName());

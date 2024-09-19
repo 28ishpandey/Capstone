@@ -41,12 +41,14 @@ public class UserCreateDTO {
    * First name of the user.
    */
   @NotBlank(message = "first name cannot be blank")
+  @Pattern(regexp = "^[A-Za-z]+$", message = "First name can only contain alphabets")
   private String firstName;
 
   /**
    * Last name of the user.
    */
   @NotBlank(message = "last name cannot be blank")
+  @Pattern(regexp = "^[A-Za-z]+$", message = "First name can only contain alphabets")
   private String lastName;
   /**
    * Address of the user.

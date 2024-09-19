@@ -35,9 +35,14 @@ import java.util.List;
 @RequestMapping("/restaurant-owners")
 @Slf4j
 public class RestaurantOwnerController {
-
+  /**
+   * Service for handling owner-related operations.
+   */
   @Autowired
   private RestaurantOwnerService ownerService;
+  /**
+   * Service for handling restaurant-related operations.
+   */
   @Autowired
   private RestaurantService restaurantService;
 
@@ -48,7 +53,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity with a message indicating the success or failure of the operation.
    */
   @PostMapping
-  public ResponseEntity<MessageDTO> createRestaurantOwner(@Validated @RequestBody RestaurantOwnerInDTO ownerDto) {
+  public ResponseEntity<MessageDTO> createRestaurantOwner(@Validated @RequestBody final RestaurantOwnerInDTO ownerDto) {
     log.info("Received request to create restaurant owner with email: {}", ownerDto.getEmail());
     return ownerService.createRestaurantOwner(ownerDto);
   }
@@ -61,8 +66,8 @@ public class RestaurantOwnerController {
    * @return ResponseEntity with a message indicating the success or failure of the operation.
    */
   @PutMapping("/{id}")
-  public ResponseEntity<MessageDTO> updateRestaurantOwner(@PathVariable Long id,
-                                                          @Validated @RequestBody RestaurantOwnerUpdateDTO ownerDto) {
+  public ResponseEntity<MessageDTO> updateRestaurantOwner(@PathVariable final Long id,
+                                                          @Validated @RequestBody final RestaurantOwnerUpdateDTO ownerDto) {
     log.info("Received request to update restaurant owner with id: {} and email: {}", id, ownerDto.getEmail());
     return ownerService.updateRestaurantOwner(id, ownerDto);
   }
@@ -74,7 +79,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity with a message indicating the success or failure of the operation.
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<MessageDTO> deleteRestaurantOwner(@PathVariable Long id) {
+  public ResponseEntity<MessageDTO> deleteRestaurantOwner(@PathVariable final Long id) {
     log.info("Received request to delete restaurant owner with id: {}", id);
     return ownerService.deleteRestaurantOwner(id);
   }
@@ -86,7 +91,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity with the restaurant owner's details.
    */
   @GetMapping("/{id}")
-  public ResponseEntity<RestaurantOwnerOutDTO> getRestaurantOwner(@PathVariable Long id) {
+  public ResponseEntity<RestaurantOwnerOutDTO> getRestaurantOwner(@PathVariable final Long id) {
     log.info("Received request to get restaurant owner with id: {}", id);
     return ownerService.getRestaurantOwner(id);
   }
@@ -109,7 +114,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity containing the logged-in restaurant owner's details.
    */
   @PostMapping("/login")
-  public ResponseEntity<RestaurantOwnerOutDTO> login(@Validated @RequestBody LoginDTO loginDto) {
+  public ResponseEntity<RestaurantOwnerOutDTO> login(@Validated @RequestBody final LoginDTO loginDto) {
     log.info("Received login request for email: {}", loginDto.getEmail());
     return ownerService.login(loginDto);
   }
@@ -121,7 +126,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity containing a list of restaurants owned by the specified owner.
    */
   @GetMapping("/owner/{ownerId}")
-  public ResponseEntity<List<RestaurantOutDTO>> getRestaurantsByOwnerId(@PathVariable Long ownerId) {
+  public ResponseEntity<List<RestaurantOutDTO>> getRestaurantsByOwnerId(@PathVariable final Long ownerId) {
     log.info("Received request to fetch all restaurants for owner ID: {}", ownerId);
     return ownerService.getRestaurantsByOwnerId(ownerId);
   }
@@ -133,7 +138,7 @@ public class RestaurantOwnerController {
    * @return ResponseEntity with a message indicating that the password reset email has been sent.
    */
   @PostMapping("/forgot-password")
-  public ResponseEntity<MessageDTO> forgotPassword(@RequestBody ForgotPasswordDTO forgotPasswordDTO) {
+  public ResponseEntity<MessageDTO> forgotPassword(@RequestBody final ForgotPasswordDTO forgotPasswordDTO) {
     log.info("Forgot password request received for email: {}", forgotPasswordDTO.getEmail());
     ownerService.forgotPassword(forgotPasswordDTO);
     log.info("Forgot password email sent");

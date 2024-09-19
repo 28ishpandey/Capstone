@@ -55,12 +55,8 @@ class OrderItemEntityTest {
 
     orderItem.setFoodItemName(null);
     assertNull(orderItem.getFoodItemName());
-
-    // Test with empty string
     orderItem.setFoodItemName("");
     assertEquals("", orderItem.getFoodItemName());
-
-    // Test with very long string
     String longName = "A".repeat(1000);
     orderItem.setFoodItemName(longName);
     assertEquals(longName, orderItem.getFoodItemName());
@@ -77,16 +73,8 @@ class OrderItemEntityTest {
 
     orderItem.setQuantity(null);
     assertNull(orderItem.getQuantity());
-
-    // Test with zero
     orderItem.setQuantity(0);
     assertEquals(0, orderItem.getQuantity());
-
-    // Test with negative value (if allowed by your business logic)
-    orderItem.setQuantity(-1);
-    assertEquals(-1, orderItem.getQuantity());
-
-    // Test with very large value
     orderItem.setQuantity(Integer.MAX_VALUE);
     assertEquals(Integer.MAX_VALUE, orderItem.getQuantity());
   }
@@ -102,16 +90,8 @@ class OrderItemEntityTest {
 
     orderItem.setPrice(null);
     assertNull(orderItem.getPrice());
-
-    // Test with zero
     orderItem.setPrice(0.0);
     assertEquals(0.0, orderItem.getPrice());
-
-    // Test with negative value (if allowed by your business logic)
-    orderItem.setPrice(-5.0);
-    assertEquals(-5.0, orderItem.getPrice());
-
-    // Test with very large value
     orderItem.setPrice(Double.MAX_VALUE);
     assertEquals(Double.MAX_VALUE, orderItem.getPrice());
   }

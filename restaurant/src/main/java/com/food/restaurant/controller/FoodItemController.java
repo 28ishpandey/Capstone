@@ -31,7 +31,9 @@ import java.util.List;
 @RequestMapping("/food-items")
 @Slf4j
 public class FoodItemController {
-
+  /**
+   * Service for handling food-related operations.
+   */
   @Autowired
   private FoodItemService foodItemService;
 
@@ -43,9 +45,9 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a message indicating success or failure
    */
   @PostMapping
-  public ResponseEntity<MessageDTO> createFoodItem(@Validated @ModelAttribute FoodItemInDTO foodItemInDTO,
+  public ResponseEntity<MessageDTO> createFoodItem(@Validated @ModelAttribute final FoodItemInDTO foodItemInDTO,
                                                    @RequestPart(value = "image", required = false)
-                                                   MultipartFile image) {
+                                                   final MultipartFile image) {
     log.info("Received request to create food item for restaurant ID: {}", foodItemInDTO.getRestaurantId());
     return foodItemService.createFoodItem(foodItemInDTO, image);
   }
@@ -57,7 +59,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a list of food items for the specified category
    */
   @GetMapping("/category/{categoryId}")
-  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItems(@PathVariable Long categoryId) {
+  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItems(@PathVariable final Long categoryId) {
     log.info("Received request to get all food items for category ID: {}", categoryId);
     return foodItemService.getAllFoodItemsForCategory(categoryId);
   }
@@ -72,9 +74,9 @@ public class FoodItemController {
    */
   @PutMapping("/{id}")
   public ResponseEntity<MessageDTO> updateFoodItem(
-    @PathVariable Long id,
-    @Validated @ModelAttribute FoodItemInDTO foodItemInDTO,
-    @RequestParam(value = "image", required = false) MultipartFile image) {
+    @PathVariable final Long id,
+    @Validated @ModelAttribute final FoodItemInDTO foodItemInDTO,
+    @RequestParam(value = "image", required = false) final MultipartFile image) {
     log.info("Received request to update food item with ID: {}", id);
     return foodItemService.updateFoodItem(id, foodItemInDTO, image);
   }
@@ -86,7 +88,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a message indicating success or failure
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<MessageDTO> deleteFoodItem(@PathVariable Long id) {
+  public ResponseEntity<MessageDTO> deleteFoodItem(@PathVariable final Long id) {
     log.info("Received request to delete food item with ID: {}", id);
     return foodItemService.deleteFoodItem(id);
   }
@@ -98,7 +100,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a success message
    */
   @PostMapping("/upload-image")
-  public ResponseEntity<String> uploadFoodItemImage(@ModelAttribute FoodItemImageDTO foodItemImageDTO) {
+  public ResponseEntity<String> uploadFoodItemImage(@ModelAttribute final FoodItemImageDTO foodItemImageDTO) {
     log.info("Received request to upload image for food item ID: {}", foodItemImageDTO.getFoodItemId());
     return foodItemService.uploadFoodItemImage(foodItemImageDTO);
   }
@@ -110,7 +112,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} containing the image as a byte array
    */
   @GetMapping("/{foodItemId}/image")
-  public ResponseEntity<byte[]> getFoodItemImage(@PathVariable Long foodItemId) {
+  public ResponseEntity<byte[]> getFoodItemImage(@PathVariable final Long foodItemId) {
     log.info("Received request to get image for food item ID: {}", foodItemId);
     return foodItemService.getFoodItemImage(foodItemId);
   }
@@ -122,7 +124,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a message indicating success or failure
    */
   @PutMapping("/{foodItemId}/image")
-  public ResponseEntity<MessageDTO> updateFoodItemImage(@ModelAttribute FoodItemImageDTO foodItemImageDTO) {
+  public ResponseEntity<MessageDTO> updateFoodItemImage(@ModelAttribute final FoodItemImageDTO foodItemImageDTO) {
     log.info("Received request to update image for food item ID: {}", foodItemImageDTO.getFoodItemId());
     return foodItemService.updateFoodItemImage(foodItemImageDTO);
   }
@@ -134,7 +136,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a message indicating success or failure
    */
   @DeleteMapping("/{foodItemId}/image")
-  public ResponseEntity<MessageDTO> deleteFoodItemImage(@PathVariable Long foodItemId) {
+  public ResponseEntity<MessageDTO> deleteFoodItemImage(@PathVariable final Long foodItemId) {
     log.info("Received request to delete image for food item ID: {}", foodItemId);
     return foodItemService.deleteFoodItemImage(foodItemId);
   }
@@ -147,7 +149,7 @@ public class FoodItemController {
    */
   @GetMapping("/sort")
   public ResponseEntity<List<FoodItemOutDTO>> getFoodItemsSortedByPrice(
-    @RequestParam(name = "asc", defaultValue = "true") boolean ascending) {
+    @RequestParam(name = "asc", defaultValue = "true") final boolean ascending) {
     log.info("Received request to get food items sorted by price in {} order", ascending ? "ascending" : "descending");
     return foodItemService.getFoodItemsSortedByPrice(ascending);
   }
@@ -159,7 +161,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a list of food items matching the availability status
    */
   @GetMapping("/filter/availability")
-  public ResponseEntity<List<FoodItemOutDTO>> filterByAvailability(@RequestParam boolean availability) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByAvailability(@RequestParam final boolean availability) {
     log.info("Received request to filter food items by availability: {}", availability);
     return foodItemService.filterByAvailability(availability);
   }
@@ -171,7 +173,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a list of food items matching the vegetarian status
    */
   @GetMapping("/filter/is-veg")
-  public ResponseEntity<List<FoodItemOutDTO>> filterByIsVeg(@RequestParam boolean isVeg) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByIsVeg(@RequestParam final boolean isVeg) {
     log.info("Received request to filter food items by vegetarian status: {}", isVeg);
     return foodItemService.filterByIsVeg(isVeg);
   }
@@ -183,7 +185,7 @@ public class FoodItemController {
    * @return a {@link ResponseEntity} with a list of food items matching the category name
    */
   @GetMapping("/filter/category")
-  public ResponseEntity<List<FoodItemOutDTO>> filterByCategoryName(@RequestParam String categoryName) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByCategoryName(@RequestParam final String categoryName) {
     log.info("Received request to filter food items by category name: {}", categoryName);
     return foodItemService.filterByCategoryName(categoryName);
   }

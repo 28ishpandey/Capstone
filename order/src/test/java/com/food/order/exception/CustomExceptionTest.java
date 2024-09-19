@@ -3,7 +3,7 @@ package com.food.order.exception;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CustomExceptionsTest {
+class CustomExceptionTest {
 
   @Test
   void testInvalidInputException() {

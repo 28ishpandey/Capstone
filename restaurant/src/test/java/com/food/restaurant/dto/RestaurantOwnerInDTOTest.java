@@ -29,8 +29,8 @@ class RestaurantOwnerInDTOTest {
     RestaurantOwnerInDTO dto = new RestaurantOwnerInDTO();
     assertNull(dto.getFirstName());
 
-    dto.setFirstName("John");
-    assertEquals("John", dto.getFirstName());
+    dto.setFirstName("firstname");
+    assertEquals("firstname", dto.getFirstName());
 
     Set<ConstraintViolation<RestaurantOwnerInDTO>> violations = validator.validateProperty(dto, "firstName");
     assertTrue(violations.isEmpty());
@@ -46,8 +46,8 @@ class RestaurantOwnerInDTOTest {
     RestaurantOwnerInDTO dto = new RestaurantOwnerInDTO();
     assertNull(dto.getLastName());
 
-    dto.setLastName("Doe");
-    assertEquals("Doe", dto.getLastName());
+    dto.setLastName("lastname");
+    assertEquals("lastname", dto.getLastName());
 
     Set<ConstraintViolation<RestaurantOwnerInDTO>> violations = validator.validateProperty(dto, "lastName");
     assertTrue(violations.isEmpty());
@@ -113,18 +113,18 @@ class RestaurantOwnerInDTOTest {
   void testEqualsAndHashCode() {
     RestaurantOwnerInDTO dto1 = new RestaurantOwnerInDTO();
     dto1.setEmail("test@gmail.com");
-    dto1.setFirstName("John");
-    dto1.setLastName("Doe");
+    dto1.setFirstName("firstname");
+    dto1.setLastName("lastname");
 
     RestaurantOwnerInDTO dto2 = new RestaurantOwnerInDTO();
     dto2.setEmail("test@gmail.com");
-    dto2.setFirstName("John");
-    dto2.setLastName("Doe");
+    dto2.setFirstName("firstname");
+    dto2.setLastName("lastname");
 
     RestaurantOwnerInDTO dto3 = new RestaurantOwnerInDTO();
     dto3.setEmail("another@gmail.com");
-    dto3.setFirstName("Jane");
-    dto3.setLastName("Smith");
+    dto3.setFirstName("first");
+    dto3.setLastName("last");
 
     assertEquals(dto1, dto2);
     assertNotEquals(dto1, dto3);
@@ -135,15 +135,15 @@ class RestaurantOwnerInDTOTest {
   @Test
   void testToString() {
     RestaurantOwnerInDTO dto = new RestaurantOwnerInDTO();
-    dto.setFirstName("John");
-    dto.setLastName("Doe");
+    dto.setFirstName("firstname");
+    dto.setLastName("lastname");
     dto.setEmail("test@gmail.com");
     dto.setContactNumber("9123456780");
     dto.setPassword("password123");
 
     String toStringResult = dto.toString();
-    assertTrue(toStringResult.contains("firstName=John"));
-    assertTrue(toStringResult.contains("lastName=Doe"));
+    assertTrue(toStringResult.contains("firstName=firstname"));
+    assertTrue(toStringResult.contains("lastName=lastname"));
     assertTrue(toStringResult.contains("email=test@gmail.com"));
     assertTrue(toStringResult.contains("contactNumber=9123456780"));
     assertTrue(toStringResult.contains("password=password123"));

@@ -55,10 +55,6 @@ class RestaurantOwnerControllerTest {
     verify(ownerService).createRestaurantOwner(ownerDto);
   }
 
-
-
-
-
   @Test
   void deleteRestaurantOwner_Success() {
     Long id = 1L;

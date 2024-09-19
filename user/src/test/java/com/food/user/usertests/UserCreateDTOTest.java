@@ -12,7 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserCreateDTOTest {
-
+  /**
+   * Validator instance used for validating DTO objects in the test class.
+   */
   private Validator validator;
 
   @BeforeEach
@@ -26,7 +28,7 @@ class UserCreateDTOTest {
     UserCreateDTO dto = new UserCreateDTO();
     assertNull(dto.getEmail());
 
-    String email = "test@example.com";
+    String email = "email";
     dto.setEmail(email);
     assertEquals(email, dto.getEmail());
 
@@ -71,7 +73,7 @@ class UserCreateDTOTest {
     UserCreateDTO dto = new UserCreateDTO();
     assertNull(dto.getFirstName());
 
-    String firstName = "John";
+    String firstName = "firstname";
     dto.setFirstName(firstName);
     assertEquals(firstName, dto.getFirstName());
 
@@ -84,7 +86,7 @@ class UserCreateDTOTest {
     UserCreateDTO dto = new UserCreateDTO();
     assertNull(dto.getLastName());
 
-    String lastName = "Doe";
+    String lastName = "lastname";
     dto.setLastName(lastName);
     assertEquals(lastName, dto.getLastName());
 

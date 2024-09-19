@@ -32,27 +32,27 @@ class RestaurantOwnerTest {
   @Test
   void testFirstNameField() {
     assertNull(owner.getFirstName());
-    owner.setFirstName("John");
-    assertEquals("John", owner.getFirstName());
+    owner.setFirstName("first");
+    assertEquals("first", owner.getFirstName());
   }
 
   @Test
   void testLastNameField() {
     assertNull(owner.getLastName());
-    owner.setLastName("Doe");
-    assertEquals("Doe", owner.getLastName());
+    owner.setLastName("last");
+    assertEquals("last", owner.getLastName());
   }
 
   @Test
   void testEmailField() {
     assertNull(owner.getEmail());
-    owner.setEmail("john.doe@gmail.com");
-    assertEquals("john.doe@gmail.com", owner.getEmail());
+    owner.setEmail("test@gmail.com");
+    assertEquals("test@gmail.com", owner.getEmail());
 
     Set<ConstraintViolation<RestaurantOwner>> violations = validator.validateProperty(owner, "email");
     assertTrue(violations.isEmpty());
 
-    owner.setEmail("john.doe@example.com");
+    owner.setEmail("test@example.com");
     violations = validator.validateProperty(owner, "email");
     assertFalse(violations.isEmpty());
     assertEquals("Email should end with gmail.com", violations.iterator().next().getMessage());

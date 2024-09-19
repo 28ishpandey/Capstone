@@ -28,4 +28,11 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
    * @return an {@link Optional} containing the {@link OrderItem} if found.
    */
   Optional<OrderItem> findByOrderIdAndFoodItemId(Long orderId, Long foodItemId);
+  /**
+   * Deletes all order items associated with the specified order ID.
+   * This method is typically used as part of the order deletion process.
+   *
+   * @param orderId the ID of the order whose items should be deleted
+   */
+  void deleteByOrderId(Long orderId);
 }

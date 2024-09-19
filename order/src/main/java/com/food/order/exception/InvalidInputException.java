@@ -9,7 +9,7 @@ public class InvalidInputException extends RuntimeException {
    *
    * @param message the error message associated with the invalid input.
    */
-  public InvalidInputException(String message) {
+  public InvalidInputException(final String message) {
     super(message);
   }
 }

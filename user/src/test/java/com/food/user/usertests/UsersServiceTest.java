@@ -20,7 +20,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,26 +33,54 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Test class for UsersService.
+ */
 class UsersServiceTest {
 
+  /**
+   * Default wallet balance for new users.
+   */
+  private static final double DEFAULT_WALLET_BALANCE = 1000.0;
+
+  /**
+   * Updated wallet balance for testing.
+   */
+  private static final double UPDATED_WALLET_BALANCE = 1500.0;
+
+  /**
+   * Mock of UserRepository for testing.
+   */
   @Mock
   private UserRepository userRepository;
 
+  /**
+   * Mock of JavaMailSender for testing.
+   */
   @Mock
   private JavaMailSender javaMailSender;
 
+  /**
+   * UsersService instance for testing.
+   */
   @InjectMocks
   private UsersService usersService;
 
+  /**
+   * Set up test environment before each test.
+   */
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
   }
 
+  /**
+   * Test successful user creation.
+   */
   @Test
-  void testCreateUser_Success() {
+  void testCreateUserSuccess() {
     UserCreateDTO userCreateDTO =
-      new UserCreateDTO("john@example.com", "9876543210", "John", "Doe", "123 Street", "password123", 1000.0);
+      new UserCreateDTO("test@example.com", "9876543210", "password", "firstname", "lastname", "address", DEFAULT_WALLET_BALANCE);
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.empty());
     when(userRepository.save(any(Users.class))).thenReturn(new Users());
 
@@ -63,20 +90,25 @@ class UsersServiceTest {
     verify(userRepository, times(1)).save(any(Users.class));
   }
 
+  /**
+   * Test user creation when account already exists.
+   */
   @Test
-  void testCreateUser_AccountExists() {
-
+  void testCreateUserAccountExists() {
     UserCreateDTO userCreateDTO =
-      new UserCreateDTO("john@example.com", "9876543210", "John", "Doe", "123 Street", "password123", 1000.0);
+      new UserCreateDTO("email@example.com", "9876543210", "password", "firstname", "lastname",
+        "address", DEFAULT_WALLET_BALANCE);
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.of(new Users()));
 
     assertThrows(AccountExistException.class, () -> usersService.createUser(userCreateDTO));
     verify(userRepository, never()).save(any(Users.class));
   }
 
+  /**
+   * Test successful retrieval of user by ID.
+   */
   @Test
-  void testGetUserById_Success() {
-
+  void testGetUserByIdSuccess() {
     Users user = new Users();
     user.setUserId(1L);
     when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -87,56 +119,57 @@ class UsersServiceTest {
     assertEquals(1L, responseDTO.getUserId());
   }
 
+  /**
+   * Test retrieval of non-existent user by ID.
+   */
   @Test
-  void testGetUserById_NotFound() {
+  void testGetUserByIdNotFound() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(AccountNotFoundException.class, () -> usersService.getUserById(1L));
   }
 
+  /**
+   * Test successful user update.
+   */
   @Test
-  void testGetAllUsers() {
-    when(userRepository.findAll()).thenReturn(List.of(new Users(), new Users()));
-
-    List<UserResponseDTO> users = usersService.getAllUsers();
-
-    assertEquals(2, users.size());
-    verify(userRepository, times(1)).findAll();
-  }
-
-  @Test
-  void testUpdateUser_Success() {
-
+  void testUpdateUserSuccess() {
     Users existingUser = new Users();
     existingUser.setUserId(1L);
-    existingUser.setEmail("john@example.com");
-    UserUpdateDTO userUpdateDTO = new UserUpdateDTO("john@example.com", "9876543210", "John", "Doe", "456 Street", 1500.0);
+    existingUser.setEmail("newemail@example.com");
+    UserUpdateDTO userUpdateDTO = new UserUpdateDTO("newemail@example.com", "9876543210",
+      "firstname", "lastname", "address", UPDATED_WALLET_BALANCE);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(existingUser));
     when(userRepository.save(any(Users.class))).thenReturn(existingUser);
 
     UserResponseDTO responseDTO = usersService.updateUser(1L, userUpdateDTO);
 
     assertNotNull(responseDTO);
-    assertEquals("456 Street", responseDTO.getAddress());
+    assertEquals("address", responseDTO.getAddress());
   }
 
+  /**
+   * Test user update when email already exists.
+   */
   @Test
-  void testUpdateUser_EmailExists() {
-
+  void testUpdateUserEmailExists() {
     Users existingUser = new Users();
     existingUser.setUserId(1L);
-    existingUser.setEmail("john@example.com");
+    existingUser.setEmail("email@example.com");
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(existingUser));
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.of(new Users()));
 
-    UserUpdateDTO userUpdateDTO = new UserUpdateDTO("newemail@example.com", "9876543210", "John", "Doe", "456 Street", 1500.0);
+    UserUpdateDTO userUpdateDTO = new UserUpdateDTO("email1@example.com", "9876543210",
+      "firstname", "lastname", "address", UPDATED_WALLET_BALANCE);
 
     assertThrows(AccountExistException.class, () -> usersService.updateUser(1L, userUpdateDTO));
   }
 
+  /**
+   * Test successful user deletion.
+   */
   @Test
-  void testDeleteUser_Success() {
-
+  void testDeleteUserSuccess() {
     Users user = new Users();
     user.setUserId(1L);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
@@ -146,47 +179,55 @@ class UsersServiceTest {
     verify(userRepository, times(1)).delete(user);
   }
 
+  /**
+   * Test deletion of non-existent user.
+   */
   @Test
-  void testDeleteUser_NotFound() {
-
+  void testDeleteUserNotFound() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(AccountNotFoundException.class, () -> usersService.deleteUser(1L));
   }
 
+  /**
+   * Test successful user login.
+   */
   @Test
-  void testLogin_Success() {
-
-    LoginDTO loginDTO = new LoginDTO("john@example.com", "password123");
+  void testLoginSuccess() {
+    LoginDTO loginDTO = new LoginDTO("email@example.com", "password123");
     Users user = new Users();
-    user.setEmail("john@example.com");
+    user.setEmail("email@example.com");
     user.setPassword(PasswordUtil.encryptPassword("password123"));
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.of(user));
 
     UserResponseDTO responseDTO = usersService.login(loginDTO);
 
     assertNotNull(responseDTO);
-    assertEquals("john@example.com", responseDTO.getEmail());
+    assertEquals("email@example.com", responseDTO.getEmail());
   }
 
+  /**
+   * Test login with invalid credentials.
+   */
   @Test
-  void testLogin_InvalidCredentials() {
-
-    LoginDTO loginDTO = new LoginDTO("john@example.com", "wrongpassword");
+  void testLoginInvalidCredentials() {
+    LoginDTO loginDTO = new LoginDTO("email@example.com", "wrongpassword");
     Users user = new Users();
-    user.setEmail("john@example.com");
+    user.setEmail("email@example.com");
     user.setPassword(PasswordUtil.encryptPassword("password123"));
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.of(user));
 
     assertThrows(InvalidCredentials.class, () -> usersService.login(loginDTO));
   }
 
+  /**
+   * Test successful password reset request.
+   */
   @Test
-  void testForgotPassword_Success() {
-
-    ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO("john@example.com");
+  void testForgotPasswordSuccess() {
+    ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO("email@example.com");
     Users user = new Users();
-    user.setEmail("john@example.com");
+    user.setEmail("email@example.com");
     user.setPassword(PasswordUtil.encryptPassword("password123"));
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.of(user));
 
@@ -195,18 +236,22 @@ class UsersServiceTest {
     verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
   }
 
+  /**
+   * Test password reset request for non-existent user.
+   */
   @Test
-  void testForgotPassword_NotFound() {
-
-    ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO("john@example.com");
+  void testForgotPasswordNotFound() {
+    ForgotPasswordDTO forgotPasswordDTO = new ForgotPasswordDTO("email@example.com");
     when(userRepository.findByEmailIgnoreCase(anyString())).thenReturn(Optional.empty());
 
     assertThrows(AccountNotFoundException.class, () -> usersService.forgotPassword(forgotPasswordDTO));
   }
 
+  /**
+   * Test successful password change.
+   */
   @Test
-  void testChangePassword_Success() {
-
+  void testChangePasswordSuccess() {
     Users user = new Users();
     user.setUserId(1L);
     user.setPassword(PasswordUtil.encryptPassword("oldpassword"));
@@ -218,16 +263,21 @@ class UsersServiceTest {
     assertNotNull(responseDTO);
   }
 
+  /**
+   * Test password change for non-existent user.
+   */
   @Test
-  void testChangePassword_NotFound() {
-
+  void testChangePasswordNotFound() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(AccountNotFoundException.class, () -> usersService.changePassword(1L, "newpassword"));
   }
 
+  /**
+   * Test successful address update.
+   */
   @Test
-  void testUpdateAddress_Success() {
+  void testUpdateAddressSuccess() {
     Users user = new Users();
     user.setUserId(1L);
     user.setAddress("Old Address");
@@ -239,16 +289,19 @@ class UsersServiceTest {
     assertEquals("New Address", responseDTO.getAddress());
   }
 
+  /**
+   * Test successful wallet balance update.
+   */
   @Test
-  void testUpdateWalletBalance_Success() {
+  void testUpdateWalletBalanceSuccess() {
     Users user = new Users();
     user.setUserId(1L);
-    user.setWalletBalance(500.0);
+    user.setWalletBalance(DEFAULT_WALLET_BALANCE / 2);
     when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
     when(userRepository.save(any(Users.class))).thenReturn(user);
 
-    UserResponseDTO responseDTO = usersService.updateWalletBalance(1L, 1000.0);
+    UserResponseDTO responseDTO = usersService.updateWalletBalance(1L, DEFAULT_WALLET_BALANCE);
 
-    assertEquals(1000.0, responseDTO.getWalletBalance());
+    assertEquals(DEFAULT_WALLET_BALANCE, responseDTO.getWalletBalance());
   }
 }

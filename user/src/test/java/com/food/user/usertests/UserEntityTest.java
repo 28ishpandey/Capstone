@@ -1,14 +1,35 @@
-package com.food.user.entity;
+package com.food.user.usertests;
 
+import com.food.user.entity.Users;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+/**
+ * Unit test for the Users entity class.
+ */
 class UserEntityTest {
 
+  /**
+   * The first user instance used for testing.
+   */
   private Users user1;
+
+  /**
+   * The second user instance used for testing.
+   */
   private Users user2;
+
+  /**
+   * Initial wallet balance for a new user in the test cases.
+   */
+  private static final double INITIAL_WALLET_BALANCE = 1000.0;
+
+  /**
+   * Updated wallet balance for a user after performing a test update.
+   */
+  private static final double UPDATED_WALLET_BALANCE = 2000.0;
 
   @BeforeEach
   void setUp() {
@@ -17,20 +38,20 @@ class UserEntityTest {
     user1.setEmail("test1@gmail.com");
     user1.setContactNumber("9876543210");
     user1.setPassword("password123");
-    user1.setFirstName("John");
-    user1.setLastName("Doe");
-    user1.setWalletBalance(1000.0);
-    user1.setAddress("123 Test St");
+    user1.setFirstName("firstname");
+    user1.setLastName("lastname");
+    user1.setWalletBalance(INITIAL_WALLET_BALANCE);
+    user1.setAddress("address");
 
     user2 = new Users();
     user2.setUserId(1L);
     user2.setEmail("test1@gmail.com");
     user2.setContactNumber("9876543210");
     user2.setPassword("password123");
-    user2.setFirstName("John");
-    user2.setLastName("Doe");
-    user2.setWalletBalance(1000.0);
-    user2.setAddress("123 Test St");
+    user2.setFirstName("firstname");
+    user2.setLastName("lastname");
+    user2.setWalletBalance(INITIAL_WALLET_BALANCE);
+    user2.setAddress("address");
   }
 
   @Test
@@ -71,8 +92,8 @@ class UserEntityTest {
 
   @Test
   void testWalletBalance() {
-    user1.setWalletBalance(2000.0);
-    assertEquals(2000.0, user1.getWalletBalance());
+    user1.setWalletBalance(UPDATED_WALLET_BALANCE);
+    assertEquals(UPDATED_WALLET_BALANCE, user1.getWalletBalance());
   }
 
   @Test

@@ -24,7 +24,7 @@ public class PasswordUtil {
    * @param password the password to be encoded
    * @return the Base64 encoded string representation of the password
    */
-  public static String encode(String password) {
+  public static String encode(final String password) {
     return Base64.getEncoder().encodeToString(password.getBytes());
   }
 
@@ -39,7 +39,7 @@ public class PasswordUtil {
    * @param encodedPassword the Base64 encoded string to be decoded
    * @return the decoded password string
    */
-  public static String decode(String encodedPassword) {
+  public static String decode(final String encodedPassword) {
     return new String(Base64.getDecoder().decode(encodedPassword));
   }
 }

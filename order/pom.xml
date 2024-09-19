@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.2</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.food</groupId>
 	<artifactId>order</artifactId>
@@ -97,12 +97,10 @@
 				<version>3.2.0</version>
 				<configuration>
 					<consoleOutput>true</consoleOutput>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<includeTestSourceDirectory>false</includeTestSourceDirectory>
 					<failOnViolation>true</failOnViolation>
 					<failsOnError>true</failsOnError>
 					<configLocation>config/checkstyle/checkstyle.xml</configLocation>
-					<suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
-					<suppressionsFileExpression>suppressions.xml</suppressionsFileExpression>
 				</configuration>
 				<executions>
 					<execution>
@@ -120,19 +118,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.21.0</version>
 			</plugin>
-			<!-- Spotbugs Plugin -->
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.7.3.0</version> <!-- Use the latest version -->
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserResponseDTOTest {
-
+  /**
+   * Initial wallet balance for a new user in the test cases.
+   */
+  private static final double INITIAL_WALLET_BALANCE = 1000.0;
   @Test
   void testUserIdField() {
     UserResponseDTO dto = new UserResponseDTO();
@@ -43,7 +46,7 @@ class UserResponseDTOTest {
     UserResponseDTO dto = new UserResponseDTO();
     assertNull(dto.getFirstName());
 
-    String firstName = "John";
+    String firstName = "firstname";
     dto.setFirstName(firstName);
     assertEquals(firstName, dto.getFirstName());
   }
@@ -53,7 +56,7 @@ class UserResponseDTOTest {
     UserResponseDTO dto = new UserResponseDTO();
     assertNull(dto.getLastName());
 
-    String lastName = "Doe";
+    String lastName = "lastname";
     dto.setLastName(lastName);
     assertEquals(lastName, dto.getLastName());
   }
@@ -63,7 +66,7 @@ class UserResponseDTOTest {
     UserResponseDTO dto = new UserResponseDTO();
     assertNull(dto.getWalletBalance());
 
-    Double walletBalance = 1000.0;
+    Double walletBalance = INITIAL_WALLET_BALANCE;
     dto.setWalletBalance(walletBalance);
     assertEquals(walletBalance, dto.getWalletBalance());
   }

@@ -43,19 +43,29 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class RestaurantService {
-
+  /**
+   * Repository for restaurant data operations.
+   */
   @Autowired
   private RestaurantRepository restaurantRepository;
-
+  /**
+   * Repository for owner data operations.
+   */
   @Autowired
   private RestaurantOwnerRepository ownerRepository;
-
+  /**
+   * Class for conversion of dto.
+   */
   @Autowired
   private RestaurantMapper restaurantMapper;
-
+  /**
+   * Repository for category data operations.
+   */
   @Autowired
   private CategoryRepository categoryRepository;
-
+  /**
+   * Repository for food data operations.
+   */
   @Autowired
   private FoodItemRepository foodItemRepository;
   /**
@@ -65,7 +75,7 @@ public class RestaurantService {
    * @param image the image file associated with the restaurant
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<MessageDTO> createRestaurant(RestaurantInDTO restaurantDto, MultipartFile image) {
+  public ResponseEntity<MessageDTO> createRestaurant(final RestaurantInDTO restaurantDto, final MultipartFile image) {
     log.info("Entering createRestaurantWithImage with email: {}", restaurantDto.getEmail());
 
     String trimmedEmail = restaurantDto.getEmail().trim().toLowerCase();
@@ -113,7 +123,8 @@ public class RestaurantService {
    * @param image the new image file for the restaurant
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<MessageDTO> updateRestaurant(Long id, RestaurantUpdateDTO restaurantDto, MultipartFile image) {
+  public ResponseEntity<MessageDTO> updateRestaurant(final Long id, final RestaurantUpdateDTO restaurantDto,
+                                                     final MultipartFile image) {
     log.info("Entering updateRestaurant with id: {} and email: {}", id, restaurantDto.getEmail());
 
     Restaurant restaurant = restaurantRepository.findById(id)
@@ -163,7 +174,7 @@ public class RestaurantService {
    * @param restaurantImageDTO contains the restaurant ID and image file
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<String> uploadRestaurantImage(RestaurantImageDTO restaurantImageDTO) {
+  public ResponseEntity<String> uploadRestaurantImage(final RestaurantImageDTO restaurantImageDTO) {
     Restaurant restaurant = findRestaurantById(restaurantImageDTO.getRestaurantId());
 
     validateImageFormat(restaurantImageDTO.getImage());
@@ -186,7 +197,7 @@ public class RestaurantService {
    * @param restaurantId the ID of the restaurant
    * @return a ResponseEntity containing the image bytes and HTTP headers
    */
-  public ResponseEntity<byte[]> getRestaurantImage(Long restaurantId) {
+  public ResponseEntity<byte[]> getRestaurantImage(final Long restaurantId) {
     Restaurant restaurant = findRestaurantById(restaurantId);
 
     byte[] image = restaurant.getImage();
@@ -206,7 +217,7 @@ public class RestaurantService {
    * @param restaurantImageDTO contains the restaurant ID and new image file
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<MessageDTO> updateRestaurantImage(RestaurantImageDTO restaurantImageDTO) {
+  public ResponseEntity<MessageDTO> updateRestaurantImage(final RestaurantImageDTO restaurantImageDTO) {
     Restaurant restaurant = findRestaurantById(restaurantImageDTO.getRestaurantId());
 
     validateImageFormat(restaurantImageDTO.getImage());
@@ -228,7 +239,7 @@ public class RestaurantService {
    * @param restaurantId the ID of the restaurant
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<String> deleteRestaurantImage(Long restaurantId) {
+  public ResponseEntity<String> deleteRestaurantImage(final Long restaurantId) {
     Restaurant restaurant = findRestaurantById(restaurantId);
 
     if (restaurant.getImage() == null) {
@@ -249,7 +260,7 @@ public class RestaurantService {
    * @return the Restaurant entity
    * @throws ResourceNotFoundException if the restaurant is not found
    */
-  private Restaurant findRestaurantById(Long restaurantId) {
+  private Restaurant findRestaurantById(final Long restaurantId) {
     return restaurantRepository.findById(restaurantId)
       .orElseThrow(() -> {
         log.warn("Restaurant not found with ID: {}", restaurantId);
@@ -262,7 +273,7 @@ public class RestaurantService {
    * @param file the image file to be validated
    * @throws IllegalArgumentException if the file format is not allowed
    */
-  private void validateImageFormat(MultipartFile file) {
+  private void validateImageFormat(final MultipartFile file) {
     String contentType = file.getContentType();
     if (!"image/jpeg".equals(contentType) && !"image/jpg".equals(contentType) && !"image/png".equals(contentType)) {
       log.warn("Invalid image format: {}", contentType);
@@ -276,7 +287,7 @@ public class RestaurantService {
    * @param ownerPassword the password of the restaurant owner
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
-  public ResponseEntity<MessageDTO> deleteRestaurant(Long id, String ownerPassword) {
+  public ResponseEntity<MessageDTO> deleteRestaurant(final Long id, final String ownerPassword) {
     log.info("Entering deleteRestaurant with id: {}", id);
 
     Optional<Restaurant> restaurant = restaurantRepository.findById(id);
@@ -308,7 +319,7 @@ public class RestaurantService {
    * @param id the ID of the restaurant
    * @return a ResponseEntity containing the restaurant details
    */
-  public ResponseEntity<?> getRestaurant(Long id) {
+  public ResponseEntity<?> getRestaurant(final Long id) {
     log.info("Entering getRestaurant with id: {}", id);
 
     Optional<Restaurant> restaurant = restaurantRepository.findById(id);
@@ -345,7 +356,7 @@ public class RestaurantService {
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
   @Transactional
-  public ResponseEntity<MessageDTO> setRestaurantStatus(Long id, Boolean isOpen) {
+  public ResponseEntity<MessageDTO> setRestaurantStatus(final Long id, final Boolean isOpen) {
     log.info("Entering setRestaurantStatus with id: {} and isOpen: {}", id, isOpen);
 
     Optional<Restaurant> restaurantOpt = restaurantRepository.findById(id);
@@ -369,7 +380,7 @@ public class RestaurantService {
    * @return a ResponseEntity containing a list of CategoryOutDTO with nested food items
    */
   @Transactional
-  public ResponseEntity<List<CategoryOutDTO>> getAllFoodItemsByRestaurant(Long restaurantId) {
+  public ResponseEntity<List<CategoryOutDTO>> getAllFoodItemsByRestaurant(final Long restaurantId) {
     log.info("Fetching all categories and their food items for restaurant ID: {}", restaurantId);
 
     List<Category> categories = categoryRepository.findByRestaurantId(restaurantId);
@@ -411,7 +422,7 @@ public class RestaurantService {
    * @return a ResponseEntity containing a list of FoodItemOutDTO
    */
   @Transactional
-  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsOfRestaurant(Long restaurantId) {
+  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsOfRestaurant(final Long restaurantId) {
     log.info("Fetching all food items for restaurant ID: {}", restaurantId);
 
     List<FoodItem> foodItems = foodItemRepository.findByRestaurantId(restaurantId);

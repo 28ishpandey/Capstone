@@ -10,7 +10,7 @@ public class InvalidInputException extends RuntimeException {
    *
    * @param message the detail message.
    */
-  public InvalidInputException(String message) {
+  public InvalidInputException(final String message) {
     super(message);
   }
 }

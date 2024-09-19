@@ -35,7 +35,9 @@ import java.util.List;
 @RequestMapping("/restaurants")
 @Slf4j
 public class RestaurantController {
-
+  /**
+   * Service for handling restaurant-related operations.
+   */
   @Autowired
   private RestaurantService restaurantService;
 
@@ -48,8 +50,8 @@ public class RestaurantController {
    */
   @PostMapping
   public ResponseEntity<MessageDTO> createRestaurant(
-    @ModelAttribute RestaurantInDTO restaurantInDto,
-    @RequestPart(value = "image", required = false) MultipartFile image) {
+    @ModelAttribute final RestaurantInDTO restaurantInDto,
+    @RequestPart(value = "image", required = false) final MultipartFile image) {
     log.info("Received request to create restaurant with email: {}", restaurantInDto.getEmail());
     return restaurantService.createRestaurant(restaurantInDto, image);
   }
@@ -64,9 +66,9 @@ public class RestaurantController {
    */
   @PutMapping("/{id}")
   public ResponseEntity<MessageDTO> updateRestaurant(
-    @PathVariable Long id,
-    @Validated @ModelAttribute RestaurantUpdateDTO restaurantUpdateDto,
-    @RequestPart(value = "image", required = false) MultipartFile image) {
+    @PathVariable final Long id,
+    @Validated @ModelAttribute final RestaurantUpdateDTO restaurantUpdateDto,
+    @RequestPart(value = "image", required = false) final MultipartFile image) {
     log.info("Received request to update restaurant with id: {} and email: {}", id, restaurantUpdateDto.getEmail());
     return restaurantService.updateRestaurant(id, restaurantUpdateDto, image);
   }
@@ -79,7 +81,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a message and HTTP status.
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<MessageDTO> deleteRestaurant(@PathVariable Long id, @RequestParam String ownerPassword) {
+  public ResponseEntity<MessageDTO> deleteRestaurant(@PathVariable final Long id, @RequestParam final String ownerPassword) {
     log.info("Received request to delete restaurant with id: {} and owner password provided", id);
     return restaurantService.deleteRestaurant(id, ownerPassword);
   }
@@ -91,7 +93,7 @@ public class RestaurantController {
    * @return ResponseEntity containing restaurant details.
    */
   @GetMapping("/{id}")
-  public ResponseEntity<?> getRestaurant(@PathVariable Long id) {
+  public ResponseEntity<?> getRestaurant(@PathVariable final Long id) {
     log.info("Received request to get restaurant with id: {}", id);
     return restaurantService.getRestaurant(id);
   }
@@ -114,7 +116,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a message and HTTP status.
    */
   @PostMapping("/upload-image")
-  public ResponseEntity<String> uploadRestaurantImage(@ModelAttribute RestaurantImageDTO restaurantImageDTO) {
+  public ResponseEntity<String> uploadRestaurantImage(@ModelAttribute final RestaurantImageDTO restaurantImageDTO) {
     log.info("Received request to upload image for restaurant with ID: {}", restaurantImageDTO.getRestaurantId());
     return restaurantService.uploadRestaurantImage(restaurantImageDTO);
   }
@@ -126,7 +128,7 @@ public class RestaurantController {
    * @return ResponseEntity containing the restaurant image as a byte array.
    */
   @GetMapping("/{restaurantId}/image")
-  public ResponseEntity<byte[]> getRestaurantImage(@PathVariable Long restaurantId) {
+  public ResponseEntity<byte[]> getRestaurantImage(@PathVariable final Long restaurantId) {
     log.info("Received request to get image for restaurant with ID: {}", restaurantId);
     return restaurantService.getRestaurantImage(restaurantId);
   }
@@ -138,7 +140,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a message and HTTP status.
    */
   @PutMapping("/{restaurantId}/image")
-  public ResponseEntity<MessageDTO> updateRestaurantImage(@ModelAttribute RestaurantImageDTO restaurantImageDTO) {
+  public ResponseEntity<MessageDTO> updateRestaurantImage(@ModelAttribute final RestaurantImageDTO restaurantImageDTO) {
     log.info("Received request to update image for restaurant with ID: {}", restaurantImageDTO.getRestaurantId());
     return restaurantService.updateRestaurantImage(restaurantImageDTO);
   }
@@ -150,7 +152,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a message and HTTP status.
    */
   @DeleteMapping("/{restaurantId}/image")
-  public ResponseEntity<String> deleteRestaurantImage(@PathVariable Long restaurantId) {
+  public ResponseEntity<String> deleteRestaurantImage(@PathVariable final Long restaurantId) {
     log.info("Received request to delete image for restaurant with ID: {}", restaurantId);
     return restaurantService.deleteRestaurantImage(restaurantId);
   }
@@ -163,7 +165,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a message and HTTP status.
    */
   @PutMapping("/{id}/open-status")
-  public ResponseEntity<MessageDTO> setRestaurantStatus(@PathVariable Long id, @RequestParam Boolean isOpen) {
+  public ResponseEntity<MessageDTO> setRestaurantStatus(@PathVariable final Long id, @RequestParam final Boolean isOpen) {
     log.info("Received request to set restaurant status with id: {} to isOpen: {}", id, isOpen);
     return restaurantService.setRestaurantStatus(id, isOpen);
   }
@@ -175,7 +177,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a list of categories and their food items.
    */
   @GetMapping("/{restaurantId}/categories/food-items")
-  public ResponseEntity<List<CategoryOutDTO>> getAllFoodItemsByRestaurant(@PathVariable Long restaurantId) {
+  public ResponseEntity<List<CategoryOutDTO>> getAllFoodItemsByRestaurant(@PathVariable final Long restaurantId) {
     log.info("Received request to fetch all categories and their food items for restaurant ID: {}", restaurantId);
     return restaurantService.getAllFoodItemsByRestaurant(restaurantId);
   }
@@ -187,7 +189,7 @@ public class RestaurantController {
    * @return ResponseEntity containing a list of food items.
    */
   @GetMapping("/{restaurantId}/food-items")
-  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsOfRestaurant(@PathVariable Long restaurantId) {
+  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsOfRestaurant(@PathVariable final Long restaurantId) {
     log.info("Received request to fetch all food items for restaurant ID: {}", restaurantId);
     return restaurantService.getAllFoodItemsOfRestaurant(restaurantId);
   }

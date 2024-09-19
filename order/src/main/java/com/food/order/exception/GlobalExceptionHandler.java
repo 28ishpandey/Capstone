@@ -24,8 +24,15 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
-    String errorMessage = "Validation failed: " + ex.getFieldError().getDefaultMessage();
+  public ErrorResponse handleValidationExceptions(final MethodArgumentNotValidException ex) {
+    String errorMessage;
+
+    if (ex.getFieldError() != null) {
+      errorMessage = "Validation failed: " + ex.getFieldError().getDefaultMessage();
+    } else {
+      errorMessage = "Validation failed: No field errors available.";
+    }
+
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
   }
 
@@ -38,7 +45,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ResponseBody
-  public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex) {
+  public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException ex) {
     return new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
   }
 
@@ -51,7 +58,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(ResourceAlreadyExistException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   @ResponseBody
-  public ErrorResponse handleResourceAlreadyExistsException(ResourceAlreadyExistException ex) {
+  public ErrorResponse handleResourceAlreadyExistsException(final ResourceAlreadyExistException ex) {
     return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
   }
 
@@ -64,9 +71,22 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(InvalidInputException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ResponseBody
-  public ErrorResponse handleInvalidInputException(InvalidInputException ex) {
+  public ErrorResponse handleInvalidInputException(final InvalidInputException ex) {
     return new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
   }
+  /**
+   * Handles exceptions when service is not available.
+   *
+   * @param ex the {@link ServiceUnavailableException} thrown when input data is invalid.
+   * @return a custom {@link ErrorResponse} with HTTP status 503 (Service Unavailable) and an error message.
+   */
+  @ExceptionHandler(ServiceUnavailableException.class)
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+  @ResponseBody
+  public ErrorResponse handleServiceUnavailableException(final ServiceUnavailableException ex) {
+    return new ErrorResponse(HttpStatus.SERVICE_UNAVAILABLE.value(), ex.getMessage());
+  }
+
 
   /**
    * Handles Feign client exceptions, typically thrown when a service is unavailable or unresponsive.
@@ -77,7 +97,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(FeignException.class)
   @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
   @ResponseBody
-  public ErrorResponse handleFeignException(FeignException ex) {
+  public ErrorResponse handleFeignException(final FeignException ex) {
     return new ErrorResponse(HttpStatus.SERVICE_UNAVAILABLE.value(), "Service temporarily unavailable");
   }
 
@@ -101,7 +121,7 @@ public class GlobalExceptionHandler {
      * @param status  the HTTP status code.
      * @param message the error message.
      */
-    public ErrorResponse(int status, String message) {
+    public ErrorResponse(final int status, final String message) {
       this.status = status;
       this.message = message;
     }
@@ -120,7 +140,7 @@ public class GlobalExceptionHandler {
      *
      * @param status the HTTP status code.
      */
-    public void setStatus(int status) {
+    public void setStatus(final int status) {
       this.status = status;
     }
 
@@ -138,7 +158,7 @@ public class GlobalExceptionHandler {
      *
      * @param message the error message.
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
       this.message = message;
     }
   }

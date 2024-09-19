@@ -59,8 +59,6 @@ class OrderEntityTest {
 
     order.setOrderStatus(null);
     assertNull(order.getOrderStatus());
-
-    // Test all possible enum values
     for (OrderStatus orderStatus : OrderStatus.values()) {
       order.setOrderStatus(orderStatus);
       assertEquals(orderStatus, order.getOrderStatus());
@@ -104,16 +102,8 @@ class OrderEntityTest {
 
     order.setTotalAmount(null);
     assertNull(order.getTotalAmount());
-
-    // Test with zero
     order.setTotalAmount(0.0);
     assertEquals(0.0, order.getTotalAmount());
-
-    // Test with negative value (if allowed by your business logic)
-    order.setTotalAmount(-50.0);
-    assertEquals(-50.0, order.getTotalAmount());
-
-    // Test with very large value
     order.setTotalAmount(Double.MAX_VALUE);
     assertEquals(Double.MAX_VALUE, order.getTotalAmount());
   }

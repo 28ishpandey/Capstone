@@ -71,8 +71,8 @@ class RestaurantOwnerServiceTest {
     RestaurantOwnerInDTO ownerDto = new RestaurantOwnerInDTO();
     ownerDto.setEmail("test@example.com");
     ownerDto.setPassword("password");
-    ownerDto.setFirstName("John");
-    ownerDto.setLastName("Doe");
+    ownerDto.setFirstName("first");
+    ownerDto.setLastName("last");
     ownerDto.setContactNumber("1234567890");
 
     when(ownerRepository.existsByEmail(anyString())).thenReturn(false);
@@ -108,8 +108,8 @@ class RestaurantOwnerServiceTest {
     Long id = 1L;
     RestaurantOwnerUpdateDTO ownerDto = new RestaurantOwnerUpdateDTO();
     ownerDto.setEmail("updated@example.com");
-    ownerDto.setFirstName("John");
-    ownerDto.setLastName("Doe");
+    ownerDto.setFirstName("first");
+    ownerDto.setLastName("last");
     ownerDto.setContactNumber("1234567890");
 
     RestaurantOwner existingOwner = new RestaurantOwner();
@@ -212,8 +212,8 @@ class RestaurantOwnerServiceTest {
     RestaurantOwner owner = new RestaurantOwner();
     owner.setPassword(PasswordUtil.encode("password"));
     owner.setId(1L);
-    owner.setFirstName("John");
-    owner.setLastName("Doe");
+    owner.setFirstName("first");
+    owner.setLastName("last");
     owner.setEmail("test@example.com");
     owner.setContactNumber("1234567890");
 
@@ -224,8 +224,8 @@ class RestaurantOwnerServiceTest {
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertEquals(1L, response.getBody().getId());
-    assertEquals("John", response.getBody().getFirstName());
-    assertEquals("Doe", response.getBody().getLastName());
+    assertEquals("first", response.getBody().getFirstName());
+    assertEquals("last", response.getBody().getLastName());
     assertEquals("test@example.com", response.getBody().getEmail());
     assertEquals("1234567890", response.getBody().getContactNumber());
   }
