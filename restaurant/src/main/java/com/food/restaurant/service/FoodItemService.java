@@ -39,13 +39,19 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class FoodItemService {
-
+  /**
+   * Repository for food data operations.
+   */
   @Autowired
   private FoodItemRepository foodItemRepository;
-
+  /**
+   * Repository for category data operations.
+   */
   @Autowired
   private CategoryRepository categoryRepository;
-
+  /**
+   * Repository for restaurant data operations.
+   */
   @Autowired
   private RestaurantRepository restaurantRepository;
 
@@ -61,7 +67,7 @@ public class FoodItemService {
    * @return a {@link ResponseEntity} with a {@link MessageDTO} indicating success or failure
    */
   @Transactional
-  public ResponseEntity<MessageDTO> createFoodItem(FoodItemInDTO foodItemInDTO, MultipartFile image) {
+  public ResponseEntity<MessageDTO> createFoodItem(final FoodItemInDTO foodItemInDTO, final MultipartFile image) {
     if (!restaurantRepository.existsById(foodItemInDTO.getRestaurantId())) {
       log.warn("Restaurant not found with ID: {}", foodItemInDTO.getRestaurantId());
       throw new ResourceNotFoundException("Restaurant not found with ID: " + foodItemInDTO.getRestaurantId());
@@ -72,7 +78,8 @@ public class FoodItemService {
 
     boolean exists = foodItemRepository.existsByRestaurantIdAndNameIgnoreCase(foodItemInDTO.getRestaurantId(), foodItemName);
     if (exists) {
-      log.warn("Food item name '{}' already exists for restaurant ID: {}", foodItemInDTO.getName(), foodItemInDTO.getRestaurantId());
+      log.warn("Food item name '{}' already exists for restaurant ID: {}", foodItemInDTO.getName(),
+        foodItemInDTO.getRestaurantId());
       throw new ResourceAlreadyExistException("Food item name already exists for the specified restaurant.");
     }
 
@@ -105,7 +112,7 @@ public class FoodItemService {
    * @return a {@link ResponseEntity} containing a list of {@link FoodItemOutDTO} for the specified category
    */
 
-  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsForCategory(Long categoryId) {
+  public ResponseEntity<List<FoodItemOutDTO>> getAllFoodItemsForCategory(final Long categoryId) {
     List<FoodItem> foodItems = foodItemRepository.findByCategoryId(categoryId);
     List<FoodItemOutDTO> foodItemOutDTOs = foodItems.stream()
       .map(this::toOutDTO)
@@ -127,14 +134,15 @@ public class FoodItemService {
    * @param image         the new image of the food item, which can be null
    * @return a {@link ResponseEntity} with a {@link MessageDTO} indicating success or failure
    */
-  public ResponseEntity<MessageDTO> updateFoodItem(Long id, FoodItemInDTO foodItemInDTO, MultipartFile image) {
+  public ResponseEntity<MessageDTO> updateFoodItem(final Long id, final FoodItemInDTO foodItemInDTO, final MultipartFile image) {
     FoodItem foodItem = foodItemRepository.findById(id)
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + id));
 
     String foodItemName = foodItemInDTO.getName().trim().toLowerCase();
     boolean exists = foodItemRepository.existsByRestaurantIdAndNameIgnoreCase(foodItemInDTO.getRestaurantId(), foodItemName);
     if (exists && !foodItemName.equalsIgnoreCase(foodItem.getName())) {
-      log.warn("Food item name '{}' already exists for restaurant ID: {}", foodItemInDTO.getName(), foodItemInDTO.getRestaurantId());
+      log.warn("Food item name '{}' already exists for restaurant ID: {}", foodItemInDTO.getName(),
+        foodItemInDTO.getRestaurantId());
       throw new ResourceAlreadyExistException("Food item name already exists for the specified restaurant.");
     }
 
@@ -166,7 +174,7 @@ public class FoodItemService {
    * @param id the ID of the food item to be deleted
    * @return a {@link ResponseEntity} with a {@link MessageDTO} indicating success or failure
    */
-  public ResponseEntity<MessageDTO> deleteFoodItem(Long id) {
+  public ResponseEntity<MessageDTO> deleteFoodItem(final Long id) {
     FoodItem foodItem = foodItemRepository.findById(id)
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + id));
 
@@ -184,7 +192,7 @@ public class FoodItemService {
    * @param foodItemImageDTO the DTO containing the food item ID and image
    * @return a {@link ResponseEntity} with a success message
    */
-  public ResponseEntity<String> uploadFoodItemImage(FoodItemImageDTO foodItemImageDTO) {
+  public ResponseEntity<String> uploadFoodItemImage(final FoodItemImageDTO foodItemImageDTO) {
     FoodItem foodItem = foodItemRepository.findById(foodItemImageDTO.getFoodItemId())
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + foodItemImageDTO.getFoodItemId()));
 
@@ -208,7 +216,7 @@ public class FoodItemService {
    * @param foodItemId the ID of the food item
    * @return a {@link ResponseEntity} containing the image as a byte array
    */
-  public ResponseEntity<byte[]> getFoodItemImage(Long foodItemId) {
+  public ResponseEntity<byte[]> getFoodItemImage(final Long foodItemId) {
     FoodItem foodItem = foodItemRepository.findById(foodItemId)
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + foodItemId));
 
@@ -232,7 +240,7 @@ public class FoodItemService {
    * @param foodItemImageDTO the DTO containing the food item ID and new image
    * @return a {@link ResponseEntity} with a success message
    */
-  public ResponseEntity<MessageDTO> updateFoodItemImage(FoodItemImageDTO foodItemImageDTO) {
+  public ResponseEntity<MessageDTO> updateFoodItemImage(final FoodItemImageDTO foodItemImageDTO) {
     FoodItem foodItem = foodItemRepository.findById(foodItemImageDTO.getFoodItemId())
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + foodItemImageDTO.getFoodItemId()));
 
@@ -256,7 +264,7 @@ public class FoodItemService {
    * @param foodItemId the ID of the food item
    * @return a {@link ResponseEntity} with a success message
    */
-  public ResponseEntity<MessageDTO> deleteFoodItemImage(Long foodItemId) {
+  public ResponseEntity<MessageDTO> deleteFoodItemImage(final Long foodItemId) {
     FoodItem foodItem = foodItemRepository.findById(foodItemId)
       .orElseThrow(() -> new ResourceNotFoundException("Food item not found with ID: " + foodItemId));
 
@@ -280,7 +288,7 @@ public class FoodItemService {
    * @param ascending true for ascending order, false for descending
    * @return a {@link ResponseEntity} containing a list of sorted {@link FoodItemOutDTO}
    */
-  public ResponseEntity<List<FoodItemOutDTO>> getFoodItemsSortedByPrice(boolean ascending) {
+  public ResponseEntity<List<FoodItemOutDTO>> getFoodItemsSortedByPrice(final boolean ascending) {
     List<FoodItem> sortedFoodItems;
     if (ascending) {
       sortedFoodItems = foodItemRepository.findAllByOrderByPriceAsc();
@@ -292,7 +300,8 @@ public class FoodItemService {
       .map(this::toOutDTO)
       .collect(Collectors.toList());
 
-    log.info("Retrieved {} food items sorted by price in {} order", sortedFoodItems.size(), ascending ? "ascending" : "descending");
+    log.info("Retrieved {} food items sorted by price in {} order",
+      sortedFoodItems.size(), ascending ? "ascending" : "descending");
     return new ResponseEntity<>(foodItemOutDTOs, HttpStatus.OK);
   }
 
@@ -302,7 +311,7 @@ public class FoodItemService {
    * @param availability true for available items, false for unavailable items
    * @return a {@link ResponseEntity} containing a list of {@link FoodItemOutDTO} filtered by availability
    */
-  public ResponseEntity<List<FoodItemOutDTO>> filterByAvailability(boolean availability) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByAvailability(final boolean availability) {
     List<FoodItem> foodItems = foodItemRepository.findByAvailability(availability);
     List<FoodItemOutDTO> foodItemOutDTOs = foodItems.stream()
       .map(this::toOutDTO)
@@ -318,7 +327,7 @@ public class FoodItemService {
    * @param isVeg true for vegetarian items, false for non-vegetarian items
    * @return a {@link ResponseEntity} containing a list of {@link FoodItemOutDTO} filtered by vegetarian status
    */
-  public ResponseEntity<List<FoodItemOutDTO>> filterByIsVeg(boolean isVeg) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByIsVeg(final boolean isVeg) {
     List<FoodItem> foodItems = foodItemRepository.findByIsVeg(isVeg);
     List<FoodItemOutDTO> foodItemOutDTOs = foodItems.stream()
       .map(this::toOutDTO)
@@ -335,7 +344,7 @@ public class FoodItemService {
    * @return a {@link ResponseEntity} containing a list of {@link FoodItemOutDTO} filtered by category name
    */
 
-  public ResponseEntity<List<FoodItemOutDTO>> filterByCategoryName(String categoryName) {
+  public ResponseEntity<List<FoodItemOutDTO>> filterByCategoryName(final String categoryName) {
     List<Category> categories = categoryRepository.findByNameIgnoreCase(categoryName);
     if (categories.isEmpty()) {
       log.warn("No categories found with name: {}", categoryName);
@@ -361,7 +370,7 @@ public class FoodItemService {
    * @param file the image file to be validated
    * @throws InvalidInputException if the file format is not allowed
    */
-  void validateImageFormat(MultipartFile file) {
+  void validateImageFormat(final MultipartFile file) {
     String contentType = file.getContentType();
     if (!"image/jpeg".equals(contentType) && !"image/jpg".equals(contentType) && !"image/png".equals(contentType)) {
       log.warn("Invalid image format: {}", contentType);
@@ -376,7 +385,7 @@ public class FoodItemService {
    * @return the corresponding {@link FoodItemOutDTO}
    */
 
-  private FoodItemOutDTO toOutDTO(FoodItem foodItem) {
+  private FoodItemOutDTO toOutDTO(final FoodItem foodItem) {
     FoodItemOutDTO dto = new FoodItemOutDTO();
     dto.setId(foodItem.getId());
     dto.setCategoryId(foodItem.getCategoryId());

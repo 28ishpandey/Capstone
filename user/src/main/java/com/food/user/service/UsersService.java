@@ -1,5 +1,6 @@
 package com.food.user.service;
 
+import com.food.user.dto.ContactUsDTO;
 import com.food.user.dto.ForgotPasswordDTO;
 import com.food.user.dto.LoginDTO;
 import com.food.user.dto.UserCreateDTO;
@@ -27,11 +28,22 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UsersService {
-
+  /**
+   * Repository for user data operations.
+   */
   @Autowired
   private UserRepository userRepository;
+
+  /**
+   * Service for sending emails.
+   */
   @Autowired
   private JavaMailSender javaMailSender;
+
+  /**
+   * Default wallet balance for new users.
+   */
+  private static final double DEFAULT_WALLET_BALANCE = 1000.0;
 
   /**
    * Creates a new user in the system.
@@ -39,8 +51,7 @@ public class UsersService {
    * @param userCreateDTO the user details for creation
    * @return the created user details
    */
-
-  public UserResponseDTO createUser(UserCreateDTO userCreateDTO) {
+  public UserResponseDTO createUser(final UserCreateDTO userCreateDTO) {
     log.info("Creating user with email: {}", userCreateDTO.getEmail());
     String trimmedEmail = userCreateDTO.getEmail().trim().toLowerCase();
     Optional<Users> existingUser = userRepository.findByEmailIgnoreCase(trimmedEmail);
@@ -53,7 +64,7 @@ public class UsersService {
       user.setFirstName(userCreateDTO.getFirstName());
       user.setLastName(userCreateDTO.getLastName());
       user.setAddress(userCreateDTO.getAddress());
-      user.setWalletBalance(1000.0);
+      user.setWalletBalance(DEFAULT_WALLET_BALANCE);
 
       Users savedUser = userRepository.save(user);
       log.info("User created with ID: {}", savedUser.getUserId());
@@ -68,7 +79,7 @@ public class UsersService {
    * @param userId the ID of the user
    * @return the user details
    */
-  public UserResponseDTO getUserById(Long userId) {
+  public UserResponseDTO getUserById(final Long userId) {
     log.info("Fetching user with ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
@@ -95,17 +106,15 @@ public class UsersService {
    * @return the updated user details
    */
 
-  public UserResponseDTO updateUser(Long userId, UserUpdateDTO userUpdateDTO) {
+  public UserResponseDTO updateUser(final Long userId, final UserUpdateDTO userUpdateDTO) {
     log.info("Updating user with ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
 
-    // Trim and convert email to lowercase
     String updatedEmail = userUpdateDTO.getEmail().trim().toLowerCase();
 
-    // Check if the new email is different from the current one
     if (!updatedEmail.equals(user.getEmail())) {
-      // Check if the new email is already in use by another user
+
       if (userRepository.findByEmailIgnoreCase(updatedEmail).isPresent()) {
         log.warn("Email {} is already in use by another user", updatedEmail);
         throw new AccountExistException();
@@ -129,7 +138,7 @@ public class UsersService {
    *
    * @param userId the ID of the user to delete
    */
-  public void deleteUser(Long userId) {
+  public void deleteUser(final Long userId) {
     log.info("Deleting user with ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
@@ -143,7 +152,7 @@ public class UsersService {
    * @param loginDTO the login credentials
    * @return the user details if authentication is successful
    */
-  public UserResponseDTO login(LoginDTO loginDTO) {
+  public UserResponseDTO login(final LoginDTO loginDTO) {
     log.info("Attempting login for email: {}", loginDTO.getEmail());
     Users user = userRepository.findByEmailIgnoreCase(loginDTO.getEmail())
       .orElseThrow(AccountNotFoundException::new);
@@ -163,7 +172,7 @@ public class UsersService {
    *
    * @param forgotPasswordDTO the details for forgot password
    */
-  public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+  public void forgotPassword(final ForgotPasswordDTO forgotPasswordDTO) {
     log.info("Processing forgot password for email: {}", forgotPasswordDTO.getEmail());
     Users user = userRepository.findByEmailIgnoreCase(forgotPasswordDTO.getEmail())
       .orElseThrow(AccountNotFoundException::new);
@@ -178,8 +187,9 @@ public class UsersService {
    * Sends a reset password email to the user.
    *
    * @param email the email address to send the reset email to
+   * @param password the password to send.
    */
-  private void sendForgotPasswordEmail(String email, String password) {
+  private void sendForgotPasswordEmail(final String email, final String password) {
     log.info("Sending forgot password email to: {}", email);
 
     SimpleMailMessage message = new SimpleMailMessage();
@@ -198,7 +208,7 @@ public class UsersService {
    * @return the updated user details
    */
 
-  public UserResponseDTO changePassword(Long userId, String newPassword) {
+  public UserResponseDTO changePassword(final Long userId, final String newPassword) {
     log.info("Changing password for user ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
@@ -223,7 +233,7 @@ public class UsersService {
    * @return a {@link UserResponseDTO} containing the updated user information
    * @throws AccountNotFoundException if the user with the specified ID is not found
    */
-  public UserResponseDTO updateAddress(Long userId, String newAddress) {
+  public UserResponseDTO updateAddress(final Long userId, final String newAddress) {
     log.info("Updating address for user ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
@@ -245,7 +255,7 @@ public class UsersService {
    * @return a {@link UserResponseDTO} containing the updated user information
    * @throws AccountNotFoundException if the user with the specified ID is not found
    */
-  public UserResponseDTO updateWalletBalance(Long userId, Double newBalance) {
+  public UserResponseDTO updateWalletBalance(final Long userId, final Double newBalance) {
     log.info("Updating wallet balance for user ID: {}", userId);
     Users user = userRepository.findById(userId)
       .orElseThrow(AccountNotFoundException::new);
@@ -265,7 +275,7 @@ public class UsersService {
    * @param user the {@link Users} entity to convert
    * @return a {@link UserResponseDTO} containing the user's details
    */
-  private UserResponseDTO convertToResponseDTO(Users user) {
+  private UserResponseDTO convertToResponseDTO(final Users user) {
     UserResponseDTO responseDTO = new UserResponseDTO();
     responseDTO.setUserId(user.getUserId());
     responseDTO.setEmail(user.getEmail());
@@ -276,4 +286,23 @@ public class UsersService {
     responseDTO.setWalletBalance(user.getWalletBalance());
     return responseDTO;
   }
+
+  /**
+   *
+   * This method is used to send mail to the admin.
+   * @param contactUsDTO stores the information.
+   *
+   */
+  public void sendContactUsEmail(final ContactUsDTO contactUsDTO) {
+    log.info("Sending contact us email from: {}", contactUsDTO.getEmail());
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo("28ishpandey@gmail.com");
+    message.setSubject(contactUsDTO.getSubject());
+    message.setText("Message from: " + contactUsDTO.getEmail() + "\n\n" + contactUsDTO.getMessage());
+
+    javaMailSender.send(message);
+    log.info("Contact us email sent successfully to admin.");
+  }
+
 }

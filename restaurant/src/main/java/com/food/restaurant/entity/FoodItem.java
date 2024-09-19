@@ -76,6 +76,5 @@ public class FoodItem {
   /**
    * A description of the food item.
    */
-  @Column(length = 500)
   private String description;
 }

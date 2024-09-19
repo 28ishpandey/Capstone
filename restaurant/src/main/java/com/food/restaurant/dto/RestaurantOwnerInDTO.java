@@ -9,11 +9,6 @@ import lombok.Data;
  * Input Data Transfer Object for creating a new restaurant owner.
  * Contains necessary information such as first name, last name, email, contact number, and password.
  */
-
-/**
- * Input Data Transfer Object for creating a new restaurant owner.
- * Contains necessary information such as first name, last name, email, contact number, and password.
- */
 @Data
 public class RestaurantOwnerInDTO {
 

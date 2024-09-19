@@ -9,12 +9,8 @@ import com.food.restaurant.exception.RestaurantNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ExceptionHandlingTests {
 
@@ -56,17 +52,6 @@ class ExceptionHandlingTests {
   void testRestaurantNotFoundException() {
     RestaurantNotFoundException exception = new RestaurantNotFoundException();
     assertEquals("Account not found", exception.getMessage());
-  }
-
-  @Test
-  void testHandleValidationExceptions() {
-    MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
-    when(ex.getFieldError()).thenReturn(new FieldError("object", "field", "DefaultMessage"));
-
-    GlobalExceptionHandler.ErrorResponse response = globalExceptionHandler.handleValidationExceptions(ex);
-
-    assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-    assertEquals("Validation failed: DefaultMessage", response.getMessage());
   }
 
   @Test

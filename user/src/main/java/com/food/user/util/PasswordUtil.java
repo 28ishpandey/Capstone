@@ -6,7 +6,12 @@ import java.util.Base64;
 /**
  * Utility class for password encryption and decryption.
  */
-public class PasswordUtil {
+public final class PasswordUtil {
+
+  // Private constructor to prevent instantiation
+  private PasswordUtil() {
+    throw new UnsupportedOperationException("Utility class should not be instantiated.");
+  }
 
   /**
    * Encrypts a password using Base64 encoding.
@@ -14,7 +19,7 @@ public class PasswordUtil {
    * @param password the password to encrypt
    * @return the encrypted password
    */
-  public static String encryptPassword(String password) {
+  public static String encryptPassword(final String password) {
     return Base64.getEncoder().encodeToString(password.getBytes(StandardCharsets.UTF_8));
   }
 
@@ -24,7 +29,7 @@ public class PasswordUtil {
    * @param encryptedPassword the encrypted password
    * @return the decrypted password
    */
-  public static String decryptPassword(String encryptedPassword) {
+  public static String decryptPassword(final String encryptedPassword) {
     return new String(Base64.getDecoder().decode(encryptedPassword), StandardCharsets.UTF_8);
   }
 }

@@ -22,7 +22,7 @@ public class RestaurantFeignClientFallBack implements RestaurantFeignClient {
    * @throws ResourceNotFoundException when the restaurant service is unavailable.
    */
   @Override
-  public RestaurantOutDTO getRestaurantById(Long id) {
+  public RestaurantOutDTO getRestaurantById(final Long id) {
     log.error("Fallback: Unable to get restaurant with ID: {}", id);
     throw new ResourceNotFoundException("Restaurant service is unavailable");
   }

@@ -25,10 +25,14 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class CategoryService {
-
+  /**
+   * Repository for category data operations.
+   */
   @Autowired
   private CategoryRepository categoryRepository;
-
+  /**
+   * Repository for restaurant data operations.
+   */
   @Autowired
   private RestaurantRepository restaurantRepository;
 
@@ -41,7 +45,7 @@ public class CategoryService {
    * @throws ResourceNotFoundException     if the restaurant is not found.
    * @throws ResourceAlreadyExistException if the category name already exists for the specified restaurant.
    */
-  public ResponseEntity<MessageDTO> createCategory(CategoryInDTO categoryInDTO) {
+  public ResponseEntity<MessageDTO> createCategory(final CategoryInDTO categoryInDTO) {
     if (!restaurantRepository.existsById(categoryInDTO.getRestaurantId())) {
       log.warn("Restaurant not found with ID: {}", categoryInDTO.getRestaurantId());
       throw new ResourceNotFoundException("Restaurant not found with ID: " + categoryInDTO.getRestaurantId());
@@ -51,7 +55,8 @@ public class CategoryService {
     boolean exists = categoryRepository.existsByRestaurantIdAndNameIgnoreCase(categoryInDTO.getRestaurantId(), categoryName);
 
     if (exists) {
-      log.warn("Category name '{}' already exists for restaurant ID: {}", categoryInDTO.getName(), categoryInDTO.getRestaurantId());
+      log.warn("Category name '{}' already exists for restaurant ID: {}", categoryInDTO.getName(),
+        categoryInDTO.getRestaurantId());
       throw new ResourceAlreadyExistException("Category name already exists for the specified restaurant.");
     }
 
@@ -70,7 +75,7 @@ public class CategoryService {
    * @param restaurantId the ID of the restaurant whose categories are to be retrieved.
    * @return a ResponseEntity containing a list of CategoryOutDTO objects and an HTTP status code.
    */
-  public ResponseEntity<List<CategoryOutDTO>> getAllCategoriesForRestaurant(Long restaurantId) {
+  public ResponseEntity<List<CategoryOutDTO>> getAllCategoriesForRestaurant(final Long restaurantId) {
     List<Category> categories = categoryRepository.findByRestaurantId(restaurantId);
     List<CategoryOutDTO> categoryOutDTOs = categories.stream()
       .map(this::toOutDTO)
@@ -90,7 +95,7 @@ public class CategoryService {
    * @throws ResourceNotFoundException     if the restaurant or category is not found.
    * @throws ResourceAlreadyExistException if the category name already exists for the restaurant.
    */
-  public ResponseEntity<MessageDTO> updateCategory(Long id, CategoryInDTO categoryInDTO) {
+  public ResponseEntity<MessageDTO> updateCategory(final Long id, final CategoryInDTO categoryInDTO) {
     log.info("Entering updateCategory with ID: {}", id);
 
     if (!restaurantRepository.existsById(categoryInDTO.getRestaurantId())) {
@@ -105,7 +110,8 @@ public class CategoryService {
     boolean exists = categoryRepository.existsByRestaurantIdAndNameIgnoreCase(categoryInDTO.getRestaurantId(), categoryName);
 
     if (exists && !categoryName.equalsIgnoreCase(category.getName())) {
-      log.warn("Category name '{}' already exists for restaurant ID: {}", categoryInDTO.getName(), categoryInDTO.getRestaurantId());
+      log.warn("Category name '{}' already exists for restaurant ID: {}", categoryInDTO.getName(),
+        categoryInDTO.getRestaurantId());
       throw new ResourceAlreadyExistException("Category name already exists for the specified restaurant.");
     }
     category.setName(categoryName);
@@ -122,7 +128,7 @@ public class CategoryService {
    * @return a ResponseEntity containing a success message and HTTP status code.
    * @throws ResourceNotFoundException if the category is not found.
    */
-  public ResponseEntity<MessageDTO> deleteCategory(Long id) {
+  public ResponseEntity<MessageDTO> deleteCategory(final Long id) {
     Category category = categoryRepository.findById(id)
       .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 
@@ -137,7 +143,7 @@ public class CategoryService {
    * @param category the Category entity to convert.
    * @return the corresponding CategoryOutDTO object.
    */
-  private CategoryOutDTO toOutDTO(Category category) {
+  private CategoryOutDTO toOutDTO(final Category category) {
     CategoryOutDTO dto = new CategoryOutDTO();
     dto.setId(category.getId());
     dto.setRestaurantId(category.getRestaurantId());

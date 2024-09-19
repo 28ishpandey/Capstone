@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * Feign client for interacting with the restaurant service.
  * It provides methods for retrieving restaurant details.
  */
-@FeignClient(name = "restaurant-service", url = "http://localhost:8081/restaurants", fallback = RestaurantFeignClientFallBack.class)
+@FeignClient(name = "restaurant-service", url = "http://localhost:8081/restaurants",
+  fallback = RestaurantFeignClientFallBack.class)
 public interface RestaurantFeignClient {
 
   /**

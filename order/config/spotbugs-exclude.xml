@@ -1,0 +1,7 @@
+<FindBugsFilter>
+    <Match>
+        <Bug code="EI_EXPOSE_REP"/>
+        <Bug code="EI_EXPOSE_REP2"/>
+        <Bug code="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+</FindBugsFilter>

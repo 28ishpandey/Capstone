@@ -51,7 +51,6 @@ class OrderCreateDTOTest {
     dto.setOrderItems(null);
     assertNull(dto.getOrderItems());
 
-    // Test with empty list
     dto.setOrderItems(new ArrayList<>());
     assertTrue(dto.getOrderItems().isEmpty());
   }

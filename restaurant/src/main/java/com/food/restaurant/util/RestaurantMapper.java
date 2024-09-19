@@ -31,7 +31,7 @@ public class RestaurantMapper {
    * @param owner the {@link RestaurantOwner} entity to be converted
    * @return the corresponding {@link RestaurantOwnerOutDTO} object
    */
-  public RestaurantOwnerOutDTO toDto(RestaurantOwner owner) {
+  public RestaurantOwnerOutDTO toDto(final RestaurantOwner owner) {
     RestaurantOwnerOutDTO ownerDto = new RestaurantOwnerOutDTO();
     ownerDto.setId(owner.getId());
     ownerDto.setFirstName(owner.getFirstName());
@@ -51,7 +51,7 @@ public class RestaurantMapper {
    * @param ownerDto the {@link RestaurantOwnerInDTO} to be converted
    * @return the corresponding {@link RestaurantOwner} entity
    */
-  public RestaurantOwner toEntity(RestaurantOwnerInDTO ownerDto) {
+  public RestaurantOwner toEntity(final RestaurantOwnerInDTO ownerDto) {
     RestaurantOwner owner = new RestaurantOwner();
     owner.setFirstName(ownerDto.getFirstName());
     owner.setLastName(ownerDto.getLastName());
@@ -71,7 +71,7 @@ public class RestaurantMapper {
    * @param restaurant the {@link Restaurant} entity to be converted
    * @return the corresponding {@link RestaurantOutDTO} object
    */
-  public RestaurantOutDTO toDto(Restaurant restaurant) {
+  public RestaurantOutDTO toDto(final Restaurant restaurant) {
     RestaurantOutDTO restaurantDto = new RestaurantOutDTO();
     restaurantDto.setId(restaurant.getId());
     restaurantDto.setEmail(restaurant.getEmail());
@@ -94,7 +94,7 @@ public class RestaurantMapper {
    * @param restaurantDto the {@link RestaurantInDTO} to be converted
    * @return the corresponding {@link Restaurant} entity
    */
-  public Restaurant toEntity(RestaurantInDTO restaurantDto) {
+  public Restaurant toEntity(final RestaurantInDTO restaurantDto) {
     Restaurant restaurant = new Restaurant();
     restaurant.setEmail(restaurantDto.getEmail());
     restaurant.setContactNumber(restaurantDto.getContactNumber());

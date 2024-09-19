@@ -26,7 +26,9 @@ import java.util.List;
 @RequestMapping("/categories")
 @Slf4j
 public class CategoryController {
-
+  /**
+   * Service for handling category-related operations.
+   */
   @Autowired
   private CategoryService categoryService;
 
@@ -37,7 +39,7 @@ public class CategoryController {
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
   @PostMapping
-  public ResponseEntity<MessageDTO> createCategory(@Validated @RequestBody CategoryInDTO categoryInDTO) {
+  public ResponseEntity<MessageDTO> createCategory(@Validated @RequestBody final CategoryInDTO categoryInDTO) {
     log.info("Received request to create category for restaurant ID: {}", categoryInDTO.getRestaurantId());
     return categoryService.createCategory(categoryInDTO);
   }
@@ -49,7 +51,7 @@ public class CategoryController {
    * @return a ResponseEntity containing a list of category output DTOs
    */
   @GetMapping("/restaurant/{restaurantId}")
-  public ResponseEntity<List<CategoryOutDTO>> getAllCategories(@PathVariable Long restaurantId) {
+  public ResponseEntity<List<CategoryOutDTO>> getAllCategories(@PathVariable final Long restaurantId) {
     log.info("Received request to get all categories for restaurant ID: {}", restaurantId);
     return categoryService.getAllCategoriesForRestaurant(restaurantId);
   }
@@ -62,7 +64,8 @@ public class CategoryController {
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
   @PutMapping("/{id}")
-  public ResponseEntity<MessageDTO> updateCategory(@PathVariable Long id, @Validated @RequestBody CategoryInDTO categoryInDTO) {
+  public ResponseEntity<MessageDTO> updateCategory(@PathVariable final Long id,
+                                                   @Validated @RequestBody final CategoryInDTO categoryInDTO) {
     log.info("Received request to update category with ID: {}", id);
     return categoryService.updateCategory(id, categoryInDTO);
   }
@@ -74,7 +77,7 @@ public class CategoryController {
    * @return a ResponseEntity containing a message indicating the result of the operation
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<MessageDTO> deleteCategory(@PathVariable Long id) {
+  public ResponseEntity<MessageDTO> deleteCategory(@PathVariable final Long id) {
     log.info("Received request to delete category with ID: {}", id);
     return categoryService.deleteCategory(id);
   }

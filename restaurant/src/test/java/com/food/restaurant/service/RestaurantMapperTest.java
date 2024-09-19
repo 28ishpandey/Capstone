@@ -28,34 +28,34 @@ class RestaurantMapperTest {
   void testToDto_RestaurantOwner() {
     RestaurantOwner owner = new RestaurantOwner();
     owner.setId(1L);
-    owner.setFirstName("John");
-    owner.setLastName("Doe");
-    owner.setEmail("john@example.com");
+    owner.setFirstName("first");
+    owner.setLastName("last");
+    owner.setEmail("test@example.com");
     owner.setContactNumber("1234567890");
 
     RestaurantOwnerOutDTO dto = restaurantMapper.toDto(owner);
 
     assertEquals(1L, dto.getId());
-    assertEquals("John", dto.getFirstName());
-    assertEquals("Doe", dto.getLastName());
-    assertEquals("john@example.com", dto.getEmail());
+    assertEquals("first", dto.getFirstName());
+    assertEquals("last", dto.getLastName());
+    assertEquals("test@example.com", dto.getEmail());
     assertEquals("1234567890", dto.getContactNumber());
   }
 
   @Test
   void testToEntity_RestaurantOwner() {
     RestaurantOwnerInDTO dto = new RestaurantOwnerInDTO();
-    dto.setFirstName("Jane");
-    dto.setLastName("Smith");
-    dto.setEmail("jane@example.com");
+    dto.setFirstName("firstname");
+    dto.setLastName("lastname");
+    dto.setEmail("test@example.com");
     dto.setContactNumber("9876543210");
     dto.setPassword("password123");
 
     RestaurantOwner owner = restaurantMapper.toEntity(dto);
 
-    assertEquals("Jane", owner.getFirstName());
-    assertEquals("Smith", owner.getLastName());
-    assertEquals("jane@example.com", owner.getEmail());
+    assertEquals("firstname", owner.getFirstName());
+    assertEquals("lastname", owner.getLastName());
+    assertEquals("test@example.com", owner.getEmail());
     assertEquals("9876543210", owner.getContactNumber());
     assertEquals("password123", owner.getPassword());
   }
@@ -64,7 +64,7 @@ class RestaurantMapperTest {
   void testToDto_Restaurant() {
     Restaurant restaurant = new Restaurant();
     restaurant.setId(1L);
-    restaurant.setEmail("restaurant@example.com");
+    restaurant.setEmail("test@example.com");
     restaurant.setContactNumber("1234567890");
     restaurant.setName("Test Restaurant");
     restaurant.setAddress("123 Test St");
@@ -76,7 +76,7 @@ class RestaurantMapperTest {
     RestaurantOutDTO dto = restaurantMapper.toDto(restaurant);
 
     assertEquals(1L, dto.getId());
-    assertEquals("restaurant@example.com", dto.getEmail());
+    assertEquals("test@example.com", dto.getEmail());
     assertEquals("1234567890", dto.getContactNumber());
     assertEquals("Test Restaurant", dto.getName());
     assertEquals("123 Test St", dto.getAddress());
@@ -88,7 +88,7 @@ class RestaurantMapperTest {
   @Test
   void testToEntity_Restaurant() {
     RestaurantInDTO dto = new RestaurantInDTO();
-    dto.setEmail("newrestaurant@example.com");
+    dto.setEmail("newtest@example.com");
     dto.setContactNumber("9876543210");
     dto.setPassword("password123");
     dto.setName("New Restaurant");
@@ -99,7 +99,7 @@ class RestaurantMapperTest {
 
     Restaurant restaurant = restaurantMapper.toEntity(dto);
 
-    assertEquals("newrestaurant@example.com", restaurant.getEmail());
+    assertEquals("newtest@example.com", restaurant.getEmail());
     assertEquals("9876543210", restaurant.getContactNumber());
     assertEquals("password123", restaurant.getPassword());
     assertEquals("New Restaurant", restaurant.getName());

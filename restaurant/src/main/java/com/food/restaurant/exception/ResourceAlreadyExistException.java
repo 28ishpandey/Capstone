@@ -10,7 +10,7 @@ public class ResourceAlreadyExistException extends RuntimeException {
    *
    * @param message the detail message.
    */
-  public ResourceAlreadyExistException(String message) {
+  public ResourceAlreadyExistException(final String message) {
     super(message);
   }
 }

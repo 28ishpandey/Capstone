@@ -51,12 +51,8 @@ class RestaurantOutDTOTest {
 
     dto.setContactNumber(null);
     assertNull(dto.getContactNumber());
-
-    // Test with empty string
     dto.setContactNumber("");
     assertEquals("", dto.getContactNumber());
-
-    // Test with very long number
     String longNumber = "1".repeat(20);
     dto.setContactNumber(longNumber);
     assertEquals(longNumber, dto.getContactNumber());
@@ -73,12 +69,8 @@ class RestaurantOutDTOTest {
 
     dto.setName(null);
     assertNull(dto.getName());
-
-    // Test with empty string
     dto.setName("");
     assertEquals("", dto.getName());
-
-    // Test with very long name
     String longName = "A".repeat(1000);
     dto.setName(longName);
     assertEquals(longName, dto.getName());
@@ -95,12 +87,8 @@ class RestaurantOutDTOTest {
 
     dto.setAddress(null);
     assertNull(dto.getAddress());
-
-    // Test with empty string
     dto.setAddress("");
     assertEquals("", dto.getAddress());
-
-    // Test with very long address
     String longAddress = "A".repeat(1000);
     dto.setAddress(longAddress);
     assertEquals(longAddress, dto.getAddress());
@@ -118,11 +106,8 @@ class RestaurantOutDTOTest {
     dto.setTimings(null);
     assertNull(dto.getTimings());
 
-    // Test with empty string
     dto.setTimings("");
     assertEquals("", dto.getTimings());
-
-    // Test with very long timings
     String longTimings = "A".repeat(1000);
     dto.setTimings(longTimings);
     assertEquals(longTimings, dto.getTimings());

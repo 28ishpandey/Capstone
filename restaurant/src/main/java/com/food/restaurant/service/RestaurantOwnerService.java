@@ -38,16 +38,24 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class RestaurantOwnerService {
-
+  /**
+   * Repository for owner data operations.
+   */
   @Autowired
   private RestaurantOwnerRepository ownerRepository;
-
+  /**
+   * Mapper class for conversion operations.
+   */
   @Autowired
   private RestaurantMapper restaurantMapper;
-
+  /**
+   * Repository for restaurant data operations.
+   */
   @Autowired
   private RestaurantRepository restaurantRepository;
-
+  /**
+   * For mail sending operations.
+   */
   @Autowired
   private JavaMailSender javaMailSender;
 
@@ -59,7 +67,7 @@ public class RestaurantOwnerService {
    * @param ownerDto the DTO containing restaurant owner information to be created
    * @return ResponseEntity containing a message DTO and HTTP status code
    */
-  public ResponseEntity<MessageDTO> createRestaurantOwner(RestaurantOwnerInDTO ownerDto) {
+  public ResponseEntity<MessageDTO> createRestaurantOwner(final RestaurantOwnerInDTO ownerDto) {
     log.info("Entering createRestaurantOwner with email: {}", ownerDto.getEmail());
     String trimmedEmail = ownerDto.getEmail().trim().toLowerCase();
     if (ownerRepository.existsByEmail(trimmedEmail)) {
@@ -83,7 +91,7 @@ public class RestaurantOwnerService {
    * @param ownerDto the DTO containing updated restaurant owner information
    * @return ResponseEntity containing a message DTO and HTTP status code
    */
-  public ResponseEntity<MessageDTO> updateRestaurantOwner(Long id, RestaurantOwnerUpdateDTO ownerDto) {
+  public ResponseEntity<MessageDTO> updateRestaurantOwner(final Long id, final RestaurantOwnerUpdateDTO ownerDto) {
     log.info("Entering updateRestaurantOwner with id: {} and email: {}", id, ownerDto.getEmail());
 
     Optional<RestaurantOwner> existingOwner = ownerRepository.findById(id);
@@ -97,7 +105,6 @@ public class RestaurantOwnerService {
     owner.setLastName(ownerDto.getLastName());
     owner.setEmail(ownerDto.getEmail());
     owner.setContactNumber(ownerDto.getContactNumber());
-//    owner.setPassword(PasswordUtil.encode(ownerDto.getPassword()));
     ownerRepository.save(owner);
 
     log.info("Exiting updateRestaurantOwner with id: {}", id);
@@ -111,7 +118,7 @@ public class RestaurantOwnerService {
    * @param id the ID of the restaurant owner to be deleted
    * @return ResponseEntity containing a message DTO and HTTP status code
    */
-  public ResponseEntity<MessageDTO> deleteRestaurantOwner(Long id) {
+  public ResponseEntity<MessageDTO> deleteRestaurantOwner(final Long id) {
     log.info("Entering deleteRestaurantOwner with id: {}", id);
 
     if (!ownerRepository.existsById(id)) {
@@ -131,7 +138,7 @@ public class RestaurantOwnerService {
    * @param id the ID of the restaurant owner to be retrieved
    * @return ResponseEntity containing the restaurant owner DTO and HTTP status code
    */
-  public ResponseEntity<RestaurantOwnerOutDTO> getRestaurantOwner(Long id) {
+  public ResponseEntity<RestaurantOwnerOutDTO> getRestaurantOwner(final Long id) {
     log.info("Entering getRestaurantOwner with id: {}", id);
 
     Optional<RestaurantOwner> owner = ownerRepository.findById(id);
@@ -170,7 +177,7 @@ public class RestaurantOwnerService {
    * @param loginDto the DTO containing email and password for login
    * @return ResponseEntity containing the restaurant owner DTO and HTTP status code
    */
-  public ResponseEntity<RestaurantOwnerOutDTO> login(LoginDTO loginDto) {
+  public ResponseEntity<RestaurantOwnerOutDTO> login(final LoginDTO loginDto) {
     log.info("Entering login with email: {}", loginDto.getEmail());
 
     Optional<RestaurantOwner> ownerOpt = ownerRepository.findByEmail(loginDto.getEmail());
@@ -206,7 +213,7 @@ public class RestaurantOwnerService {
    * @return ResponseEntity containing a list of restaurant DTOs and HTTP status code
    */
   @Transactional
-  public ResponseEntity<List<RestaurantOutDTO>> getRestaurantsByOwnerId(Long ownerId) {
+  public ResponseEntity<List<RestaurantOutDTO>> getRestaurantsByOwnerId(final Long ownerId) {
     log.info("Entering getRestaurantsByOwnerId with ownerId: {}", ownerId);
 
     List<Restaurant> restaurants = restaurantRepository.findByRestaurantOwnerId(ownerId);
@@ -228,7 +235,7 @@ public class RestaurantOwnerService {
    *
    * @param forgotPasswordDTO the DTO containing the email for which the password needs to be sent
    */
-  public void forgotPassword(ForgotPasswordDTO forgotPasswordDTO) {
+  public void forgotPassword(final ForgotPasswordDTO forgotPasswordDTO) {
     log.info("Processing forgot password for email: {}", forgotPasswordDTO.getEmail());
     RestaurantOwner owner = ownerRepository.findByEmail(forgotPasswordDTO.getEmail())
       .orElseThrow(() -> {
@@ -248,7 +255,7 @@ public class RestaurantOwnerService {
    * @param email    the recipient's email address
    * @param password the password to be sent
    */
-  private void sendForgotPasswordEmail(String email, String password) {
+  private void sendForgotPasswordEmail(final String email, final String password) {
     log.info("Sending forgot password email to: {}", email);
 
     SimpleMailMessage message = new SimpleMailMessage();
@@ -265,7 +272,7 @@ public class RestaurantOwnerService {
    * @param restaurant the Restaurant entity to be converted
    * @return the corresponding RestaurantOutDTO
    */
-  RestaurantOutDTO toOutDTO(Restaurant restaurant) {
+  RestaurantOutDTO toOutDTO(final Restaurant restaurant) {
     RestaurantOutDTO dto = new RestaurantOutDTO();
     dto.setId(restaurant.getId());
     dto.setEmail(restaurant.getEmail());

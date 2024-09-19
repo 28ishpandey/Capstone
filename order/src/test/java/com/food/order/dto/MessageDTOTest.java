@@ -16,11 +16,9 @@ class MessageDTOTest {
     dto.setMessage(null);
     assertNull(dto.getMessage());
 
-    // Test with empty string
     dto.setMessage("");
     assertEquals("", dto.getMessage());
 
-    // Test with very long string
     String longMessage = "A".repeat(1000);
     dto.setMessage(longMessage);
     assertEquals(longMessage, dto.getMessage());
